@@ -5,9 +5,17 @@ import 'package:zenspace/features/music/presentation/pages/make_music_page.dart'
 import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
 import 'package:zenspace/features/home/presentation/widgets/talk_to_pawpal_widget.dart';
 import 'package:zenspace/features/journal/presentation/pages/journal_page.dart';
+import 'package:zenspace/features/therapists/presentation/pages/therapists_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
+
+  // Color constants
+  static const Color primaryYellow = Color(0xFFFFC107);  // Main yellow for buttons and highlights
+  static const Color lightYellow = Color(0xFFFFF3D0);    // Light yellow for cards
+  static const Color bgColor = Color(0xFFFFFBF2);        // Very light yellow-white background
+  static const Color textDark = Color(0xFF2C2C2C);       // Dark text color
+  static const Color textLight = Color(0xFF757575);      // Light text color
 
   void _navigateToPage(BuildContext context, int index) {
     switch (index) {
@@ -37,7 +45,7 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F5DE), // Light lime background
+      backgroundColor: bgColor,
       body: Stack(
         children: [
           SafeArea(
@@ -53,49 +61,41 @@ class DashboardPage extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFBFD342),
+                            color: lightYellow,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
+                              
                               const SizedBox(width: 8),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    children: const [
+                                    children: [
                                       Text(
                                         'Good Afternoon,',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.black87,
+                                          color: textDark,
                                         ),
                                       ),
-                                      SizedBox(width: 4),
+                                      const SizedBox(width: 4),
                                       Text(
                                         'Shinjan',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
+                                          color: textDark,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const Text(
+                                  Text(
                                     '@shinzushinjan',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black54,
+                                      color: textLight,
                                     ),
                                   ),
                                 ],
@@ -112,7 +112,7 @@ class DashboardPage extends StatelessWidget {
                           height: 24,
                         ),
                         const SizedBox(width: 16),
-                        const Icon(Icons.notifications_outlined, size: 24),
+                        Icon(Icons.notifications_outlined, size: 24, color: textDark),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -122,46 +122,54 @@ class DashboardPage extends StatelessWidget {
                     const SizedBox(height: 24),
                     
                     // Walking illustration card
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFBFD342),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(color: Colors.black, width: 2),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 6),
-                            spreadRadius: 0,
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              AssetConstants.walkingDog,
-                              fit: BoxFit.contain,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const TalkWithAIPage()),
+                        );
+                      },
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: lightYellow,
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(color: Colors.black, width: 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black,
+                              offset: Offset(0, 6),
+                              spreadRadius: 0,
+                              blurRadius: 0,
                             ),
-                          ),
-                          Positioned(
-                            right: 16,
-                            bottom: 16,
-                            child: Container(
-                              padding: const EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(24),
-                              ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
                               child: Image.asset(
-                                AssetConstants.pawButton,
-                                width: 50,
-                                height: 50,
+                                AssetConstants.walkingDog,
+                                fit: BoxFit.contain,
                               ),
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              right: 16,
+                              bottom: 16,
+                              child: Container(
+                                padding: const EdgeInsets.all(0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: Image.asset(
+                                  AssetConstants.pawButton,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -172,31 +180,39 @@ class DashboardPage extends StatelessWidget {
                         // Counsellor card
                         Expanded(
                           flex: 3,
-                          child: Container(
-                            height: 170,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFBFD342),
-                              borderRadius: BorderRadius.circular(32),
-                              border: Border.all(color: Colors.black, width: 2),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black,
-                                  offset: Offset(0, 6),
-                                  spreadRadius: 0,
-                                  blurRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Image.asset(
-                                    AssetConstants.treatDog,
-                                    fit: BoxFit.contain,
-                                    alignment: Alignment.center,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const TherapistsPage()),
+                              );
+                            },
+                            child: Container(
+                              height: 170,
+                              decoration: BoxDecoration(
+                                color: lightYellow,
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(color: Colors.black, width: 2),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    offset: Offset(0, 6),
+                                    spreadRadius: 0,
+                                    blurRadius: 0,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Image.asset(
+                                      AssetConstants.treatDog,
+                                      fit: BoxFit.contain,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -222,69 +238,78 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
                     
                     // Meditation card
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFBFD342),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(color: Colors.black, width: 2),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 6),
-                            spreadRadius: 0,
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            AssetConstants.meditatingDog,
-                            height: 100,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'feel your own mind.',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Image.asset(
-                                  AssetConstants.rythm,
-                                  height: 50,
-                                ),
-                                const Text(
-                                  'Heal Mind, Soul, Heart',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(0),
-                            decoration: BoxDecoration(
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MakeMusicPage()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: lightYellow,
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(color: Colors.black, width: 2),
+                          boxShadow: const [
+                            BoxShadow(
                               color: Colors.black,
-                              borderRadius: BorderRadius.circular(24),
+                              offset: Offset(0, 6),
+                              spreadRadius: 0,
+                              blurRadius: 0,
                             ),
-                            child: Image.asset(
-                              AssetConstants.pawButton,
-                              width: 50,
-                              height: 50,
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              AssetConstants.meditatingDog,
+                              height: 100,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'feel your own mind.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: textDark,
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    AssetConstants.rythm,
+                                    height: 50,
+                                  ),
+                                  Text(
+                                    'Heal Mind, Soul, Heart',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: textLight,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Image.asset(
+                                AssetConstants.pawButton,
+                                width: 50,
+                                height: 50,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 100), // Bottom padding for navigation bar

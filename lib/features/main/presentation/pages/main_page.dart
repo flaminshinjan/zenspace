@@ -83,7 +83,7 @@ class _MainPageState extends State<MainPage> {
                           Container(
                             width: 24,
                             height: 3,
-                            color: _currentIndex == 0 ? const Color(0xFFBFD342) : Colors.transparent,
+                            color: _currentIndex == 0 ? const Color(0xFFF7CC57) : Colors.transparent,
                           ),
                         ],
                       ),
@@ -107,7 +107,7 @@ class _MainPageState extends State<MainPage> {
                           Container(
                             width: 24,
                             height: 3,
-                            color: _currentIndex == 1 ? const Color(0xFFBFD342) : Colors.transparent,
+                            color: _currentIndex == 1 ? const Color(0xFFF7CC57) : Colors.transparent,
                           ),
                         ],
                       ),
@@ -131,7 +131,7 @@ class _MainPageState extends State<MainPage> {
                           Container(
                             width: 24,
                             height: 3,
-                            color: _currentIndex == 2 ? const Color(0xFFBFD342) : Colors.transparent,
+                            color: _currentIndex == 2 ? const Color(0xFFF7CC57) : Colors.transparent,
                           ),
                         ],
                       ),
@@ -155,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                           Container(
                             width: 24,
                             height: 3,
-                            color: _currentIndex == 3 ? const Color(0xFFBFD342) : Colors.transparent,
+                            color: _currentIndex == 3 ? const Color(0xFFF7CC57) : Colors.transparent,
                           ),
                         ],
                       ),

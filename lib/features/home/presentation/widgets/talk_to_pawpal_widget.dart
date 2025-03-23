@@ -15,6 +15,12 @@ class _TalkToPawpalWidgetState extends State<TalkToPawpalWidget> {
   bool _isExpanded = false;
   String? _errorMessage;
 
+  // Color constants
+  static const Color primaryYellow = Color(0xFFFFC107);
+  static const Color lightYellow = Color(0xFFFFF3D0);
+  static const Color textDark = Color(0xFF2C2C2C);
+  static const Color textLight = Color(0xFF757575);
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -78,9 +84,9 @@ Your job is to:
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Call initiated! You will receive a call shortly.'),
-            backgroundColor: Color(0xFFBFD342),
+          SnackBar(
+            content: const Text('Call initiated! You will receive a call shortly.'),
+            backgroundColor: primaryYellow,
           ),
         );
         _phoneController.clear();
@@ -111,7 +117,7 @@ Your job is to:
           ? Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFAE6),
+                color: lightYellow,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.black, width: 1),
                 boxShadow: const [
@@ -132,8 +138,10 @@ Your job is to:
                         child: TextField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(
+                          style: TextStyle(color: textDark),
+                          decoration: InputDecoration(
                             hintText: 'Enter your phone number',
+                            hintStyle: TextStyle(color: textLight),
                             border: InputBorder.none,
                           ),
                         ),
@@ -146,11 +154,10 @@ Your job is to:
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFBFD342)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(primaryYellow),
                                 ),
                               )
-                            : const Icon(Icons.phone),
-                        color: const Color(0xFFBFD342),
+                            : Icon(Icons.phone, color: primaryYellow),
                       ),
                     ],
                   ),
@@ -177,7 +184,7 @@ Your job is to:
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
+                  color: lightYellow,
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(color: Colors.black, width: 1),
                   boxShadow: const [
@@ -190,15 +197,16 @@ Your job is to:
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
-                      'talk with your pawpal today',
+                      'talk with your zenbuddy today',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        color: textDark,
                       ),
                     ),
-                    Icon(Icons.phone, size: 20),
+                    Icon(Icons.phone, size: 20, color: textDark),
                   ],
                 ),
               ),

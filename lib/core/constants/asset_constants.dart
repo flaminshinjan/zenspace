@@ -33,4 +33,7 @@ class AssetConstants {
   static const String walkingDog = 'assets/images/walking_dog.png';
   static const String journalCard = 'assets/images/journal_card.png';
   static const String rythm = "assets/images/rythm.png";
+
+  // Logo
+  static const String logo = 'assets/images/logo.png';
 } 

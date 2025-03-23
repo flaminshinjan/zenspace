@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:zenspace/features/chat/presentation/widgets/animated_blob.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class MakeMusicPage extends StatefulWidget {
   const MakeMusicPage({super.key});
@@ -24,10 +25,12 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
   String _statusText = 'describe the music\nyou want to create';
 
   final List<String> _samplePrompts = [
-    'A soft piano melody with a relaxing atmosphere',
-    'Upbeat electronic dance music with synth waves',
-    'Calming nature sounds with gentle guitar',
-    'Meditation music with crystal bowls',
+    'Calming piano melody',
+    'Peaceful nature sounds',
+    'Gentle meditation music',
+    'Soft acoustic guitar',
+    'Relaxing rain sounds',
+    'Soothing wind chimes',
   ];
 
   @override
@@ -134,293 +137,235 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFAE6),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Background design elements
-            Positioned(
-              top: -100,
-              right: -100,
-              child: Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFBFD342).withOpacity(0.3),
-                  shape: BoxShape.circle,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Back button
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightYellow,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.black, width: 1),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black,
+                          offset: Offset(0, 2),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.arrow_back, color: AppColors.textDark),
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              left: -50,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFBFD342).withOpacity(0.2),
-                  shape: BoxShape.circle,
+                const SizedBox(height: 24),
+
+                // Header
+                Text(
+                  'Create Your\nMelody',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    height: 1.1,
+                    color: AppColors.textDark,
+                  ),
                 ),
-              ),
-            ),
-            // Main content
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Header
-                  
-                  // Main area with blob/player
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (_isGenerating)
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                const AnimatedBlob(
-                                  size: 250,
-                                  color: Color(0xFFBFD342),
-                                ),
-                                LoadingAnimationWidget.staggeredDotsWave(
-                                  color: Colors.black,
-                                  size: 40,
-                                ),
-                              ],
-                            )
-                          else if (_currentMusicPath != null)
-                            GestureDetector(
-                              onTap: _playMusic,
-                              child: Container(
-                                width: 250,
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Color(0xFFBFD342),
-                                      Color(0xFF9FB83A),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(125),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      offset: const Offset(0, 8),
-                                      blurRadius: 16,
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                  size: 80,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            )
-                          else
-                            const AnimatedBlob(
-                              size: 250,
-                              color: Color(0xFFBFD342),
+                const SizedBox(height: 8),
+                Text(
+                  'Describe the music you want to hear',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textLight,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Text input field
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightYellow,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.black, width: 1),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _promptController,
+                        maxLines: 3,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textDark,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'e.g. A calming piano melody with gentle rain in the background...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textLight,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isGenerating ? null : () => _generateMusic(_promptController.text),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryYellow,
+                            foregroundColor: AppColors.textDark,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(color: AppColors.black),
                             ),
-                          const SizedBox(height: 40),
-                          Text(
-                            _statusText,
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              height: 1.2,
-                              color: Colors.black,
+                          ),
+                          child: _isGenerating
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Text(
+                                  'Generate Music',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Sample prompts
+                Text(
+                  'Try these prompts',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 2.5,
+                  ),
+                  itemCount: _samplePrompts.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        _promptController.text = _samplePrompts[index];
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightYellow,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.black),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _samplePrompts[index],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textDark,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                        ],
+                        ),
                       ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                // Music player area (placeholder)
+                if (!_isGenerating)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightYellow,
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: AppColors.black, width: 1),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black,
+                          offset: Offset(0, 4),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryYellow,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.black),
+                          ),
+                          child: Icon(
+                            _isPlaying ? Icons.pause : Icons.play_arrow,
+                            size: 48,
+                            color: AppColors.textDark,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Container(
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryYellow,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '0:00',
+                              style: TextStyle(
+                                color: AppColors.textLight,
+                              ),
+                            ),
+                            Text(
+                              '3:30',
+                              style: TextStyle(
+                                color: AppColors.textLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  // Playback controls when music is generated
-                  if (_currentMusicPath != null)
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        0,
-                        16,
-                        16 + MediaQuery.of(context).padding.bottom,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _currentMusicPath = null;
-                                _statusText = 'describe the music\nyou want to create';
-                              });
-                              _audioPlayer.stop();
-                            },
-                            icon: const Icon(Icons.refresh_rounded),
-                            label: const Text('Create New'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                side: const BorderSide(color: Colors.black12),
-                              ),
-                            ),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: _playMusic,
-                            icon: Icon(_isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded),
-                            label: Text(_isPlaying ? 'Pause' : 'Play'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFBFD342),
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                  // Custom prompt input
-                  if (!_isGenerating && _currentMusicPath == null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.black12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _promptController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Describe your music...',
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                onSubmitted: _generateMusic,
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFBFD342),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: IconButton(
-                                onPressed: () => _generateMusic(_promptController.text),
-                                icon: const Icon(Icons.music_note_rounded),
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  // Sample prompts
-                  if (!_isGenerating && _currentMusicPath == null)
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 4, bottom: 12),
-                            child: Text(
-                              'Try these prompts:',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 3,
-                            ),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: _samplePrompts.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  _promptController.text = _samplePrompts[index];
-                                  _generateMusic(_samplePrompts[index]);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.black12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      _samplePrompts[index],
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 100)
-                ],
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

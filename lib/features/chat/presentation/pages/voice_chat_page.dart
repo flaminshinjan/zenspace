@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:zenspace/features/chat/presentation/widgets/animated_blob.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class VoiceChatPage extends StatefulWidget {
   final String name;
@@ -35,7 +36,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
   bool _isRecording = false;
   bool _isProcessing = false;
   String? _recordingPath;
-  String _statusText = 'tap the button\nto start talking';
+  String _statusText = 'tap to start\ntalking';
   bool _isInitialized = false;
   String _lastWords = '';
 
@@ -54,9 +55,11 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
       setState(() => _isInitialized = true);
     } catch (e) {
       print('❌ Audio initialization error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to initialize audio')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to initialize audio')),
+        );
+      }
     }
   }
 
@@ -98,9 +101,11 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
       print('🎙️ Started listening...');
     } catch (e) {
       print('❌ Listening error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to start listening')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to start listening')),
+        );
+      }
     }
   }
 
@@ -149,6 +154,8 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
             final file = File('${tempDir.path}/response.mp3');
             await file.writeAsBytes(ttsResponse.bodyBytes);
             await _audioPlayer.play(DeviceFileSource(file.path));
+          } else {
+            throw Exception('TTS failed: ${ttsResponse.statusCode}');
           }
 
           setState(() {
@@ -157,56 +164,53 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
           });
         } catch (e) {
           print('❌ Processing error: $e');
-          setState(() {
-            _isProcessing = false;
-            _statusText = 'tap the button\nto start talking';
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 5),
-            ),
-          );
+          if (mounted) {
+            setState(() {
+              _isProcessing = false;
+              _statusText = 'tap to start\ntalking';
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error: ${e.toString()}'),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 5),
+              ),
+            );
+          }
         }
       } else {
         setState(() {
           _isProcessing = false;
-          _statusText = 'tap the button\nto start talking';
+          _statusText = 'tap to start\ntalking';
         });
       }
     } catch (e) {
       print('❌ Stop listening error: $e');
-      setState(() {
-        _isRecording = false;
-        _isProcessing = false;
-        _statusText = 'tap the button\nto start talking';
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to stop listening')),
-      );
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+          _isProcessing = false;
+          _statusText = 'tap to start\ntalking';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to stop listening')),
+        );
+      }
     }
   }
 
-  Future<void> _toggleListening() async {
-    if (!_isInitialized) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Audio not initialized')),
-      );
-      return;
-    }
-
+  void _toggleListening() {
     if (_isRecording) {
-      await _stopListeningAndProcess();
+      _stopListeningAndProcess();
     } else {
-      await _startListening();
+      _startListening();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFAE6),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -216,14 +220,13 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
               right: 16,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.lightYellow,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.black, width: 1),
+                  border: Border.all(color: AppColors.black, width: 1),
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
-                  color: Colors.black,
+                  icon: Icon(Icons.close, color: AppColors.textDark),
                 ),
               ),
             ),
@@ -241,7 +244,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                         height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.black, width: 1),
+                          border: Border.all(color: AppColors.black, width: 1),
                         ),
                         child: ClipOval(
                           child: Image.asset(
@@ -256,16 +259,17 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                         children: [
                           Text(
                             widget.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
+                              color: AppColors.textDark,
                             ),
                           ),
                           Text(
                             widget.description,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black54,
+                              color: AppColors.textLight,
                             ),
                           ),
                         ],
@@ -285,29 +289,29 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                             height: 200,
                             decoration: BoxDecoration(
                               color: _isRecording 
-                                ? Colors.red 
-                                : const Color(0xFFBFD342),
+                                ? AppColors.error 
+                                : AppColors.primaryYellow,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.black,
+                                color: AppColors.black,
                                 width: 2,
                               ),
                             ),
                             child: Icon(
                               _isRecording ? Icons.stop : Icons.mic,
                               size: 64,
-                              color: Colors.black,
+                              color: AppColors.textDark,
                             ),
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
                           _statusText,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             height: 1.2,
-                            color: Colors.black,
+                            color: AppColors.textDark,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -319,23 +323,19 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
             ),
             if (_isProcessing)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: AppColors.black.withOpacity(0.5),
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const AnimatedBlob(),
-                      const SizedBox(height: 24),
-                      Text(
-                        _statusText,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'Processing your message...',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
-                    ],
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zenspace/features/auth/presentation/pages/intro_page.dart';
-import 'package:zenspace/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:zenspace/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:zenspace/core/constants/asset_constants.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -27,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
 
       if (session?.user != null) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
+          MaterialPageRoute(builder: (context) => const OnboardingPage()),
         );
       } else {
         Navigator.of(context).pushReplacement(
@@ -48,19 +49,17 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'ZenSpace',
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            Image.asset(
+              AssetConstants.logo,
+              width: 200,
+              height: 80,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(),
           ],
         ),
       ),

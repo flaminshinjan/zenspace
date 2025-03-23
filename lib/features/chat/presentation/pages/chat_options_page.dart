@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/features/chat/presentation/pages/chat_page.dart';
 import 'package:zenspace/features/chat/presentation/pages/companion_selection_page.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class ChatOptionsPage extends StatelessWidget {
   const ChatOptionsPage({super.key});
@@ -8,7 +9,7 @@ class ChatOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F5DE),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -18,10 +19,10 @@ class ChatOptionsPage extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFBFD342),
+                    color: AppColors.lightYellow,
                     borderRadius: BorderRadius.circular(32),
                     border: Border.all(
-                      color: Colors.black,
+                      color: AppColors.black,
                       width: 2,
                     ),
                     boxShadow: const [
@@ -34,44 +35,17 @@ class ChatOptionsPage extends StatelessWidget {
                     ],
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            SizedBox(
-                              height: 50,
-                            ),
-                            Text(
-                              "let's paws and\nwalk it off\none wag at a\ntime!",
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                height: 1.2,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        'How would you\nlike to chat?',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                          color: AppColors.textDark,
                         ),
-                      ),
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              child: Image.asset(
-                                'assets/images/walking_dog_banner.png',
-                                height: 380,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            
-                          ],
-                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -111,22 +85,22 @@ class ChatOptionsPage extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFBFD342),
+                          backgroundColor: AppColors.primaryYellow,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: const BorderSide(
-                              color: Colors.black,
+                            side: BorderSide(
+                              color: AppColors.black,
                               width: 2,
                             ),
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
+                        child: Text(
                           'talk',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.black,
+                            color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -165,22 +139,22 @@ class ChatOptionsPage extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFBFD342),
+                          backgroundColor: AppColors.primaryYellow,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: const BorderSide(
-                              color: Colors.black,
+                            side: BorderSide(
+                              color: AppColors.black,
                               width: 2,
                             ),
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
+                        child: Text(
                           'text',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.black,
+                            color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

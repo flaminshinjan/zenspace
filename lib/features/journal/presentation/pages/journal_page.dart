@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class JournalPage extends StatefulWidget {
   const JournalPage({super.key});
@@ -28,7 +29,7 @@ class _JournalPageState extends State<JournalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFAE6), // Light cream background
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -39,12 +40,34 @@ class _JournalPageState extends State<JournalPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Back button
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.lightYellow,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.black, width: 1),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black,
+                                offset: Offset(0, 2),
+                                blurRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: Icon(Icons.arrow_back, color: AppColors.textDark),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
                       // Date text
                       Text(
                         _getFormattedDate(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: Colors.black54,
+                          color: AppColors.textLight,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -53,11 +76,12 @@ class _JournalPageState extends State<JournalPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "Today's Thoughts",
                             style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
                             ),
                           ),
                           Image.asset(
@@ -70,19 +94,35 @@ class _JournalPageState extends State<JournalPage> {
                       const SizedBox(height: 24),
                       
                       // Journal text field
-                      TextField(
-                        controller: _journalController,
-                        focusNode: _focusNode,
-                        maxLines: null,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.5,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightYellow,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.black, width: 1),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black,
+                              offset: Offset(0, 4),
+                              blurRadius: 0,
+                            ),
+                          ],
                         ),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Write your thoughts...',
-                          hintStyle: TextStyle(
-                            color: Colors.black38,
+                        child: TextField(
+                          controller: _journalController,
+                          focusNode: _focusNode,
+                          maxLines: null,
+                          style: TextStyle(
+                            fontSize: 16,
+                            height: 1.5,
+                            color: AppColors.textDark,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Write your thoughts...',
+                            hintStyle: TextStyle(
+                              color: AppColors.textLight,
+                            ),
                           ),
                         ),
                       ),
@@ -96,11 +136,12 @@ class _JournalPageState extends State<JournalPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFBFD342),
-                borderRadius: BorderRadius.circular(32),
+                color: AppColors.lightYellow,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                border: Border.all(color: AppColors.black, width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: AppColors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -110,27 +151,27 @@ class _JournalPageState extends State<JournalPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.text_fields),
+                    icon: Icon(Icons.text_fields, color: AppColors.textDark),
                     onPressed: () {},
                     tooltip: 'Text style',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.image_outlined),
+                    icon: Icon(Icons.image_outlined, color: AppColors.textDark),
                     onPressed: () {},
                     tooltip: 'Add image',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.mic_none_rounded),
+                    icon: Icon(Icons.mic_none_rounded, color: AppColors.textDark),
                     onPressed: () {},
                     tooltip: 'Voice input',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined),
+                    icon: Icon(Icons.edit_outlined, color: AppColors.textDark),
                     onPressed: () {},
                     tooltip: 'Draw',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.more_horiz),
+                    icon: Icon(Icons.more_horiz, color: AppColors.textDark),
                     onPressed: () {},
                     tooltip: 'More options',
                   ),

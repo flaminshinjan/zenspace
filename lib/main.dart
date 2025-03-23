@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zenspace/core/config/supabase_config.dart';
 import 'package:zenspace/core/theme/app_theme.dart';
-import 'package:zenspace/features/main/presentation/pages/main_page.dart';
+import 'package:zenspace/features/auth/presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Zenspace',
       theme: AppTheme.lightTheme,
-      home: const MainPage(),
+      home: const SplashPage(),
       debugShowCheckedModeBanner: false,
     );
   }

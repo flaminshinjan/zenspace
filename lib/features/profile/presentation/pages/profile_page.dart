@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
+import 'package:zenspace/features/auth/presentation/pages/login_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -6,7 +8,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFAE6),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -26,25 +28,25 @@ class ProfilePage extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Hi,\nShinjan!',
                               style: TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w600,
                                 height: 1.1,
+                                color: AppColors.textDark,
                               ),
                             ),
                             const SizedBox(width: 4),
-                            
-                            
                           ],
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'Insights',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w500,
+                            color: AppColors.textDark,
                           ),
                         ),
                       ],
@@ -67,27 +69,35 @@ class ProfilePage extends StatelessWidget {
                       height: 183,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFBFD342),
+                        color: AppColors.lightYellow,
                         borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: AppColors.black, width: 1),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, 4),
+                            blurRadius: 0,
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Text(
                             'No Current\nStreak',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               height: 1.1,
-                              color: Colors.black,
+                              color: AppColors.textDark,
                             ),
                           ),
                           Text(
                             'Journal at least once a\nweek to build a streak',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black45,
+                              color: AppColors.textLight,
                               height: 1.2,
                             ),
                           ),
@@ -101,17 +111,17 @@ class ProfilePage extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            height: 55,
+                            height: 56,
                             child: _buildStreakCard('Longest\nDaily\nStreak', '3', 'Days'),
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            height: 55,
+                            height: 56,
                             child: _buildStreakCard('Longest\nWeekly\nStreak', '9', 'Weeks'),
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            height: 55,
+                            height: 56,
                             child: _buildStreakCard('Longest\nMoodar\nStreak', '15', 'Times'),
                           ),
                         ],
@@ -125,12 +135,12 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Manage your subscriptions',
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: AppColors.textDark,
                       ),
                     ),
                     TextButton(
@@ -140,11 +150,11 @@ class ProfilePage extends StatelessWidget {
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
+                      child: Text(
                         'See More',
                         style: TextStyle(
                           fontSize: 15,
-                          color: Colors.black45,
+                          color: AppColors.textLight,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -155,20 +165,29 @@ class ProfilePage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFBFD342),
+                    color: AppColors.lightYellow,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.black, width: 1),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Text(
                             'Basic',
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.w600,
+                              color: AppColors.textDark,
                             ),
                           ),
                           Text(
@@ -176,24 +195,25 @@ class ProfilePage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.w600,
+                              color: AppColors.textDark,
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      const Text(
+                      Text(
                         'Monthly \$1.99/month',
                         style: TextStyle(
                           fontSize: 15,
-                          color: Colors.black54,
+                          color: AppColors.textLight,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Ideal to Discover your inner self and jot\ndown your life\'s everyday bits.',
                         style: TextStyle(
                           fontSize: 15,
-                          color: Colors.black87,
+                          color: AppColors.textDark,
                           height: 1.3,
                         ),
                       ),
@@ -203,12 +223,12 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 28),
 
                 // Personalization section
-                const Text(
+                Text(
                   'Personalize your ai.journal',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: AppColors.textDark,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -232,9 +252,9 @@ class ProfilePage extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.bgColor,
                               borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.black, width: 1),
+                              border: Border.all(color: AppColors.black, width: 1),
                               boxShadow: const [
                                 BoxShadow(
                                   color: Colors.black,
@@ -249,31 +269,32 @@ class ProfilePage extends StatelessWidget {
                                 Container(
                                   width: 64,
                                   height: 64,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFBFD342),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryYellow,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.logout,
-                                    color: Colors.black,
+                                    color: AppColors.textDark,
                                     size: 32,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
-                                const Text(
+                                Text(
                                   'Logout',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
+                                    color: AppColors.textDark,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                const Text(
+                                Text(
                                   'Are you sure you want to logout?',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.black54,
+                                    color: AppColors.textLight,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -285,16 +306,16 @@ class ProfilePage extends StatelessWidget {
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(vertical: 16),
                                           decoration: BoxDecoration(
-                                            color: Colors.white,
+                                            color: AppColors.bgColor,
                                             borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(color: Colors.black12),
+                                            border: Border.all(color: AppColors.black.withOpacity(0.1)),
                                           ),
-                                          child: const Center(
+                                          child: Center(
                                             child: Text(
                                               'Cancel',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.black54,
+                                                color: AppColors.textLight,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -307,16 +328,18 @@ class ProfilePage extends StatelessWidget {
                                       child: GestureDetector(
                                         onTap: () {
                                           Navigator.pop(context);
-                                          Navigator.pushNamedAndRemoveUntil(
+                                          Navigator.pushAndRemoveUntil(
                                             context,
-                                            '/login',
+                                            MaterialPageRoute(
+                                              builder: (context) => const LoginPage(),
+                                            ),
                                             (route) => false,
                                           );
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(vertical: 16),
                                           decoration: BoxDecoration(
-                                            color: Colors.red,
+                                            color: AppColors.error,
                                             borderRadius: BorderRadius.circular(16),
                                           ),
                                           child: const Center(
@@ -343,7 +366,7 @@ class ProfilePage extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: AppColors.black,
                         borderRadius: BorderRadius.circular(32),
                       ),
                       child: Row(
@@ -352,16 +375,14 @@ class ProfilePage extends StatelessWidget {
                           Container(
                             width: 20,
                             height: 20,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFBFD342),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryYellow,
                               shape: BoxShape.circle,
                             ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.logout,
-                                color: Colors.black,
-                                size: 14,
-                              ),
+                            child: Icon(
+                              Icons.logout,
+                              color: AppColors.black,
+                              size: 14,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -391,8 +412,16 @@ class ProfilePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFBFD342),
+        color: AppColors.lightYellow,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.black, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black,
+            offset: Offset(0, 4),
+            blurRadius: 0,
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,7 +434,7 @@ class ProfilePage extends StatelessWidget {
                 'Longest',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black45,
+                  color: AppColors.textLight,
                   height: 1,
                 ),
               ),
@@ -413,7 +442,7 @@ class ProfilePage extends StatelessWidget {
                 title.split('\n')[1],
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black,
+                  color: AppColors.textDark,
                   fontWeight: FontWeight.w600,
                   height: 1,
                 ),
@@ -422,7 +451,7 @@ class ProfilePage extends StatelessWidget {
                 'Streak',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black45,
+                  color: AppColors.textLight,
                   height: 1,
                 ),
               ),
@@ -437,7 +466,7 @@ class ProfilePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: AppColors.textDark,
                   height: 1,
                 ),
               ),
@@ -445,7 +474,7 @@ class ProfilePage extends StatelessWidget {
                 unit,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black45,
+                  color: AppColors.textLight,
                   height: 1,
                 ),
               ),
@@ -460,34 +489,42 @@ class ProfilePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 241, 249, 194),
+        color: AppColors.lightYellow,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.black, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black,
+            offset: Offset(0, 4),
+            blurRadius: 0,
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
-              color: Colors.black54,
+              color: AppColors.textLight,
             ),
           ),
           Row(
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: Colors.black87,
+                  color: AppColors.textDark,
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Edit',
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.black45,
+                  color: AppColors.textLight,
                   decoration: TextDecoration.underline,
                 ),
               ),

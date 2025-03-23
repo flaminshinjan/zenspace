@@ -260,7 +260,7 @@ class _ChatPageState extends State<ChatPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 LoadingAnimationWidget.waveDots(
-                  color: const Color(0xFFBFD342),
+                  color: const Color(0xFFFFC727),
                   size: 24,
                 ),
               ],
@@ -276,245 +276,226 @@ class _ChatPageState extends State<ChatPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF3F5DE),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // Chat header
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFBFD342),
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.black,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.black, width: 1),
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: Image.asset(
-                            widget.imagePath,
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.name,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              widget.description,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.black, width: 1),
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.close),
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Chat messages
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _messages.length + (_isLoading ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _messages.length) {
-                          return _buildTypingIndicator();
-                        }
-
-                        final message = _messages[index];
-                        final isUser = message['isUser'] as bool;
-                        final isVoice = message['type'] == 'voice';
-
-                        return Align(
-                          alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isUser ? const Color(0xFFBFD342) : Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.black, width: 1),
-                              ),
-                              constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.75,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (isVoice && isUser) ...[
-                                    const Icon(Icons.mic, size: 16, color: Colors.black54),
-                                    const SizedBox(width: 8),
-                                  ],
-                                  Flexible(
-                                    child: Text(
-                                      message['text'] as String,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  // Input area
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: Colors.black12, width: 1),
-                      ),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.black12),
-                            ),
-                            child: TextField(
-                              controller: _messageController,
-                              decoration: const InputDecoration(
-                                hintText: 'Type your message...',
-                                hintStyle: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                              minLines: 1,
-                              maxLines: 5,
-                              onSubmitted: _handleTextMessage,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        if (!_isTextOnly)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.black12),
-                            ),
-                            child: IconButton(
-                              onPressed: _toggleRecording,
-                              icon: Icon(
-                                _isRecording ? Icons.stop : Icons.mic,
-                                color: _isRecording ? Colors.red : Colors.black54,
-                                size: 20,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 40,
-                                minHeight: 40,
-                              ),
-                            ),
-                          ),
-                        const SizedBox(width: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFBFD342),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.black12),
-                          ),
-                          child: IconButton(
-                            onPressed: () => _handleTextMessage(_messageController.text),
-                            icon: const Icon(
-                              Icons.send,
-                              color: Colors.black87,
-                              size: 20,
-                            ),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 40,
-                              minHeight: 40,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        body: Column(
+          children: [
+            // Chat header
+            Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 16,
+                right: 16,
+                bottom: 16,
               ),
-              if (_isRecording || _isLoading)
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFC727),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.black,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Image.asset(
+                      widget.imagePath,
+                      width: 30,
+                      height: 30,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const AnimatedBlob(),
-                      const SizedBox(height: 24),
                       Text(
-                        _isRecording ? 'Listening...' : 'Thinking...',
+                        widget.name,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        widget.description,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
                         ),
                       ),
                     ],
                   ),
+                  const Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close),
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Chat messages
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: _messages.length + (_isLoading ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _messages.length) {
+                    return _buildTypingIndicator();
+                  }
+
+                  final message = _messages[index];
+                  final isUser = message['isUser'] as bool;
+                  final isVoice = message['type'] == 'voice';
+
+                  return Align(
+                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isUser ? const Color(0xFFFFC727) : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.75,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isVoice && isUser) ...[
+                              const Icon(Icons.mic, size: 16, color: Colors.black54),
+                              const SizedBox(width: 8),
+                            ],
+                            Flexible(
+                              child: Text(
+                                message['text'] as String,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Input area
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.black12, width: 1),
                 ),
-            ],
-          ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: const InputDecoration(
+                          hintText: 'Type your message...',
+                          hintStyle: TextStyle(
+                            color: Colors.black38,
+                            fontSize: 16,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                        minLines: 1,
+                        maxLines: 5,
+                        onSubmitted: _handleTextMessage,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  if (!_isTextOnly)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: IconButton(
+                        onPressed: _toggleRecording,
+                        icon: Icon(
+                          _isRecording ? Icons.stop : Icons.mic,
+                          color: _isRecording ? Colors.red : Colors.black54,
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFC727),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.black12),
+                    ),
+                    child: IconButton(
+                      onPressed: () => _handleTextMessage(_messageController.text),
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.black87,
+                        size: 20,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 40,
+                        minHeight: 40,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
