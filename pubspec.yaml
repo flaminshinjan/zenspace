@@ -53,10 +53,13 @@ dependencies:
   logger: ^2.0.2+1
   url_launcher: ^6.2.5
   shared_preferences: ^2.2.2
-  http: ^1.1.0
+  http: ^1.2.0
   record: ^5.0.4
   audioplayers: ^5.2.1
   path_provider: ^2.1.2
+  loading_animation_widget: ^1.2.0+4
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.2.2
 
 dev_dependencies:
   flutter_test:

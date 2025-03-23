@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/features/chat/presentation/pages/chat_page.dart';
+import 'package:zenspace/features/chat/presentation/pages/voice_chat_page.dart';
 
 class CompanionSelectionPage extends StatefulWidget {
-  const CompanionSelectionPage({super.key});
+  final bool isVoiceMode;
+  
+  const CompanionSelectionPage({
+    super.key,
+    this.isVoiceMode = false,
+  });
 
   @override
   State<CompanionSelectionPage> createState() => _CompanionSelectionPageState();
@@ -23,25 +29,16 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                "Let's find you your best companion",
+                'Choose your companion',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
-                  height: 1.2,
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                "Let's find you your personalized buddy for all your queries",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -89,12 +86,19 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                name: _selectedName!,
-                                voiceType: _selectedVoiceType!,
-                                imagePath: _selectedImagePath!,
-                                description: _selectedDescription!,
-                              ),
+                              builder: (context) => widget.isVoiceMode
+                                  ? VoiceChatPage(
+                                      name: _selectedName!,
+                                      voiceType: _selectedVoiceType!,
+                                      imagePath: _selectedImagePath!,
+                                      description: _selectedDescription!,
+                                    )
+                                  : ChatPage(
+                                      name: _selectedName!,
+                                      voiceType: _selectedVoiceType!,
+                                      imagePath: _selectedImagePath!,
+                                      description: _selectedDescription!,
+                                    ),
                             ),
                           );
                         },
@@ -106,9 +110,9 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                     ),
                     disabledBackgroundColor: Colors.grey.shade300,
                   ),
-                  child: const Text(
-                    'start talking',
-                    style: TextStyle(
+                  child: Text(
+                    widget.isVoiceMode ? 'start talking' : 'start chatting',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
