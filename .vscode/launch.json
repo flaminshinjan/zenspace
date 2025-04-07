@@ -1,0 +1,47 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Zenspace Dev",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=FLAVOR=dev",
+                "--flavor",
+                "Zenspace Dev"
+            ],
+            "toolArgs": [
+                "--flavor",
+                "Zenspace Dev"
+            ]
+        },
+        {
+            "name": "Zenspace Prod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=FLAVOR=prod",
+                "--flavor",
+                "prod"
+            ],
+            "toolArgs": [
+                "--flavor",
+                "prod"
+            ]
+        },
+        {
+            "name": "Zenspace Testing",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=FLAVOR=testing",
+                "--flavor",
+                "testing"
+            ],
+            "toolArgs": [
+                "--flavor",
+                "testing"
+            ]
+        }
+    ]
+} 

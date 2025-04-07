@@ -70,37 +70,71 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
     try {
+      debugPrint('🔄 Starting Google sign in...');
       await SupabaseConfig.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: 'io.supabase.zenspace://login-callback',
       );
+      
+      debugPrint('✅ Google sign in initiated');
+      
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
+      }
     } catch (error) {
+      debugPrint('❌ Error during Google sign in: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign in with Google'),
+            content: Text('Failed to sign in with Google: ${error.toString()}'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
   }
 
   Future<void> _signInWithApple() async {
+    setState(() => _isLoading = true);
     try {
+      debugPrint('🔄 Starting Apple sign in...');
       await SupabaseConfig.client.auth.signInWithOAuth(
         OAuthProvider.apple,
         redirectTo: 'io.supabase.zenspace://login-callback',
       );
+      
+      debugPrint('✅ Apple sign in initiated');
+      
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
+      }
     } catch (error) {
+      debugPrint('❌ Error during Apple sign in: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign in with Apple'),
+            content: Text('Failed to sign in with Apple: ${error.toString()}'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
   }

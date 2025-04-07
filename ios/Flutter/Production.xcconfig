@@ -1,0 +1,9 @@
+#include "Generated.xcconfig"
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+
+FLUTTER_TARGET=lib/main_production.dart
+ASSET_PREFIX=production
+BUNDLE_NAME=Zenspace
+BUNDLE_DISPLAY_NAME=Zenspace
+PRODUCT_BUNDLE_IDENTIFIER=com.example.zenspace 

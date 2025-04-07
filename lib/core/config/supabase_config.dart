@@ -1,15 +1,51 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 
 class SupabaseConfig {
-  static const String _supabaseUrl = 'https://ehjmotmkndavlahzemfz.supabase.co';
-  static const String _supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoam1vdG1rbmRhdmxhaHplbWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NjU1NTksImV4cCI6MjA1ODI0MTU1OX0.V3sNslFLCnBWDSHYzId0Paa3c5ifFeIp9lt06XZp2vU';
-
   static Future<void> initialize() async {
-    await Supabase.initialize(
-      url: _supabaseUrl,
-      anonKey: _supabaseAnonKey,
-    );
+    try {
+      debugPrint('🌱 Loading environment variables...');
+      await dotenv.load(fileName: ".env");
+      
+      final url = dotenv.env['SUPABASE_URL'];
+      final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
+      
+      if (url == null || anonKey == null) {
+        throw Exception('Missing Supabase configuration. Please check your .env file.');
+      }
+      
+      debugPrint('🔑 Supabase URL: $url');
+      debugPrint('🔐 Anon Key length: ${anonKey.length} characters');
+      
+      debugPrint('🚀 Initializing Supabase...');
+      await Supabase.initialize(
+        url: url,
+        anonKey: anonKey,
+        debug: true, // Enable debug mode for more detailed logs
+      );
+      debugPrint('✅ Supabase initialized successfully!');
+      
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error initializing Supabase:');
+      debugPrint('Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   static SupabaseClient get client => Supabase.instance.client;
+
+  // Helper method to log auth state changes
+  static void listenToAuthChanges() {
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
+      
+      debugPrint('🔄 Auth State Change:');
+      debugPrint('Event: $event');
+      debugPrint('User ID: ${session?.user.id}');
+      debugPrint('User Email: ${session?.user.email}');
+    });
+  }
 } 

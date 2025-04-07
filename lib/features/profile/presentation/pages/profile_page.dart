@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
 import 'package:zenspace/features/auth/presentation/pages/login_page.dart';
+import 'package:zenspace/core/config/supabase_config.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  Future<void> _handleLogout(BuildContext context) async {
+    try {
+      debugPrint('🔄 Signing out from Supabase...');
+      await SupabaseConfig.client.auth.signOut();
+      debugPrint('✅ Successfully signed out');
+      
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error during sign out: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Error signing out. Please try again.'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,13 +354,7 @@ class ProfilePage extends StatelessWidget {
                                       child: GestureDetector(
                                         onTap: () {
                                           Navigator.pop(context);
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => const LoginPage(),
-                                            ),
-                                            (route) => false,
-                                          );
+                                          _handleLogout(context);
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(vertical: 16),

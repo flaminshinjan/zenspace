@@ -101,53 +101,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return '$hour:$minute $period';
   }
 
-  Future<void> _saveUserPreferences() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('onboarding_completed', true);
-      // Save the selected answers
-      for (var entry in _selectedAnswers.entries) {
-        await prefs.setStringList('onboarding_${entry.key}', entry.value);
+  void _onOptionSelected(String questionId, String option) {
+    setState(() {
+      if (_selectedAnswers.containsKey(questionId)) {
+        final answers = _selectedAnswers[questionId]!;
+        if (answers.contains(option)) {
+          answers.remove(option);
+        } else {
+          answers.add(option);
+        }
+      } else {
+        _selectedAnswers[questionId] = [option];
       }
-      
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const OnboardingCompletePage(),
-          ),
-        );
-      }
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to save preferences: $error'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    }
+    });
   }
 
-  void _onNext() {
-    // Only proceed if at least one option is selected for regular questions
-    if (_questions[_currentQuestionIndex]['type'] == null && 
-        _selectedAnswers[_questions[_currentQuestionIndex]['id']]!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select at least one option'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      return;
-    }
-
+  void _onNext() async {
     if (_currentQuestionIndex < _questions.length - 1) {
       setState(() {
         _currentQuestionIndex++;
       });
     } else {
-      _saveUserPreferences();
+      // Save answers and navigate to completion
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboarding_complete', true);
+      
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const OnboardingCompletePage()),
+      );
     }
   }
 
@@ -159,161 +141,239 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  void _onOptionSelected(String option, bool isSelected) {
-    setState(() {
-      final answers = _selectedAnswers[_questions[_currentQuestionIndex]['id']]!;
-      if (isSelected) {
-        if (!answers.contains(option)) {
-          answers.add(option);
-        }
-      } else {
-        answers.remove(option);
-      }
-    });
-
-    // For mood selection, automatically go to next question when selecting a new option
-    if (_questions[_currentQuestionIndex]['type'] == 'mood_selection' && isSelected) {
-      _onNext();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final currentQuestion = _questions[_currentQuestionIndex];
-    final currentAnswers = _selectedAnswers[currentQuestion['id']]!;
+    final selectedAnswers = _selectedAnswers[currentQuestion['id']] ?? [];
 
-    return OnboardingQuestionPage(
-      question: currentQuestion,
-      selectedAnswers: currentAnswers,
-      onNext: _onNext,
-      onBack: _onBack,
-      onOptionSelected: _onOptionSelected,
-      currentIndex: _currentQuestionIndex,
-      totalQuestions: _questions.length,
+    Widget optionsWidget;
+    
+    if (currentQuestion['type'] == 'time_selection') {
+      optionsWidget = _buildTimeSelectionOptions(currentQuestion);
+    } else if (currentQuestion['type'] == 'mood_selection') {
+      optionsWidget = _buildMoodSelectionOptions(currentQuestion, selectedAnswers);
+    } else {
+      optionsWidget = _buildRegularOptions(currentQuestion, selectedAnswers);
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Progress and Navigation
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black87,
+                      size: 28,
+                    ),
+                    onPressed: _currentQuestionIndex > 0 ? _onBack : null,
+                  ),
+                  Text(
+                    '${_currentQuestionIndex + 1}/${_questions.length}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _onNext,
+                    child: Text(
+                      'Skip',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              
+              // Question
+              Text(
+                currentQuestion['question'],
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              if (currentQuestion['subtitle'] != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  currentQuestion['subtitle'],
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 32),
+              
+              // Options
+              Expanded(child: optionsWidget),
+              
+              // Footer
+              if (currentQuestion['footer'] != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    currentQuestion['footer'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              
+              // Next Button
+              if (currentQuestion['type'] != 'mood_selection')
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: selectedAnswers.isNotEmpty ? _onNext : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFC107),
+                      foregroundColor: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: const BorderSide(color: Colors.black, width: 2),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.black,
+                    ),
+                    child: Text(
+                      _currentQuestionIndex == _questions.length - 1 ? 'Complete' : 'Continue',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
 
-class OnboardingQuestionPage extends StatelessWidget {
-  final Map<String, dynamic> question;
-  final List<String> selectedAnswers;
-  final VoidCallback onNext;
-  final VoidCallback onBack;
-  final Function(String, bool) onOptionSelected;
-  final int currentIndex;
-  final int totalQuestions;
+  Widget _buildTimeSelectionOptions(Map<String, dynamic> question) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: (question['times'] as Map<String, String>).entries.map((entry) {
+        final time = entry.key;
+        final timeValue = entry.value;
+        final isSelected = _selectedAnswers[question['id']]?.contains(time) ?? false;
 
-  const OnboardingQuestionPage({
-    super.key,
-    required this.question,
-    required this.selectedAnswers,
-    required this.onNext,
-    required this.onBack,
-    required this.onOptionSelected,
-    required this.currentIndex,
-    required this.totalQuestions,
-  });
+        return GestureDetector(
+          onTap: () => _onOptionSelected(question['id'], time),
+          child: Column(
+            children: [
+              Icon(
+                time == 'MORNING' ? Icons.wb_sunny_outlined :
+                time == 'DAY' ? Icons.wb_sunny :
+                Icons.mode_night_outlined,
+                size: 32,
+                color: Colors.black87,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.black, width: 2),
+                  boxShadow: isSelected ? [
+                    const BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                    ),
+                  ] : null,
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      time,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      timeValue,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
 
-  Widget _buildTimeSelection() {
+  Widget _buildMoodSelectionOptions(Map<String, dynamic> question, List<String> selectedAnswers) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          question['question'],
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
+        if (question['date'] != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Text(
+              question['date'],
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          question['subtitle'],
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.textLight,
-          ),
-        ),
-        const SizedBox(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildTimeOption('MORNING', Icons.wb_sunny_outlined),
-            _buildTimeOption('DAY', Icons.wb_sunny),
-            _buildTimeOption('EVENING', Icons.mode_night_outlined),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimeOption(String time, IconData icon) {
-    final isSelected = selectedAnswers.contains(time);
-    return Column(
-      children: [
-        Icon(icon, color: AppColors.textDark),
-        Text(time),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryYellow : AppColors.lightYellow,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(question['times'][time]),
-        ),
-        Switch(
-          value: isSelected,
-          onChanged: (value) {
-            onOptionSelected(time, value);
-          },
-          activeColor: AppColors.primaryYellow,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMoodSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          question['question'],
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          question['date'],
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.textLight,
-          ),
-        ),
-        const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: question['options'].map<Widget>((emoji) {
+          children: (question['options'] as List<String>).map((emoji) {
             final isSelected = selectedAnswers.contains(emoji);
+            
             return GestureDetector(
               onTap: () {
-                onOptionSelected(emoji, !isSelected);
-                if (!isSelected) {
-                  onNext();
-                }
+                _onOptionSelected(question['id'], emoji);
+                // Auto-advance after mood selection
+                Future.delayed(const Duration(milliseconds: 300), _onNext);
               },
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primaryYellow : Colors.transparent,
+                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 2),
+                  boxShadow: isSelected ? [
+                    const BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                    ),
+                  ] : null,
                 ),
                 child: Text(
                   emoji,
-                  style: const TextStyle(fontSize: 40),
+                  style: const TextStyle(fontSize: 32),
                 ),
               ),
             );
@@ -323,159 +383,57 @@ class OnboardingQuestionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRegularQuestion() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          question['question'],
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-        if (question['subtitle'] != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            question['subtitle'],
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textLight,
-            ),
-          ),
-        ],
-        const SizedBox(height: 24),
-        ...question['options'].map((option) {
-          final isSelected = selectedAnswers.contains(option);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: InkWell(
-              onTap: () => onOptionSelected(option, !isSelected),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primaryYellow : AppColors.lightYellow,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.black,
-                    width: 1,
+  Widget _buildRegularOptions(Map<String, dynamic> question, List<String> selectedAnswers) {
+    return ListView.builder(
+      itemCount: question['options'].length,
+      itemBuilder: (context, index) {
+        final option = question['options'][index];
+        final isSelected = selectedAnswers.contains(option);
+        
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GestureDetector(
+            onTap: () => _onOptionSelected(question['id'], option),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.black,
+                  width: 2,
+                ),
+                boxShadow: isSelected ? [
+                  const BoxShadow(
+                    color: Colors.black,
+                    offset: Offset(0, 4),
+                    blurRadius: 0,
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.textDark,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    if (isSelected)
-                      Icon(
-                        Icons.check_circle,
-                        color: AppColors.textDark,
-                      ),
-                  ],
-                ),
+                ] : null,
               ),
-            ),
-          );
-        }).toList(),
-        if (question['footer'] != null) ...[
-          const SizedBox(height: 16),
-          Text(
-            question['footer'],
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textLight,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Row(
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: AppColors.textDark),
-                    onPressed: currentIndex > 0 ? onBack : null,
-                  ),
-                  Text(
-                    '${currentIndex + 1}/$totalQuestions',
-                    style: TextStyle(
-                      color: AppColors.textDark,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: onNext,
+                  Expanded(
                     child: Text(
-                      'Skip',
+                      option,
                       style: TextStyle(
-                        color: AppColors.textLight,
                         fontSize: 16,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
+                  if (isSelected)
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.black87,
+                    ),
                 ],
               ),
-              const SizedBox(height: 24),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: question['type'] == 'time_selection'
-                      ? _buildTimeSelection()
-                      : question['type'] == 'mood_selection'
-                          ? _buildMoodSelection()
-                          : _buildRegularQuestion(),
-                ),
-              ),
-              if (question['type'] != 'mood_selection') ...[
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: selectedAnswers.isNotEmpty ? onNext : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryYellow,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      currentIndex < totalQuestions - 1 ? 'Next' : 'Complete',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 } 
