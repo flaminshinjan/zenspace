@@ -6,25 +6,26 @@ class SupabaseConfig {
   static Future<void> initialize() async {
     try {
       debugPrint('🌱 Loading environment variables...');
-      await dotenv.load(fileName: ".env");
+      await dotenv.load();
       
       final url = dotenv.env['SUPABASE_URL'];
       final anonKey = dotenv.env['SUPABASE_ANON_KEY'];
       
-      if (url == null || anonKey == null) {
-        throw Exception('Missing Supabase configuration. Please check your .env file.');
-      }
-      
       debugPrint('🔑 Supabase URL: $url');
-      debugPrint('🔐 Anon Key length: ${anonKey.length} characters');
+      debugPrint('🔐 Anon Key length: ${anonKey?.length ?? 0} characters');
       
       debugPrint('🚀 Initializing Supabase...');
       await Supabase.initialize(
-        url: url,
-        anonKey: anonKey,
+        url: url ?? '',
+        anonKey: anonKey ?? '',
         debug: true, // Enable debug mode for more detailed logs
       );
       debugPrint('✅ Supabase initialized successfully!');
+
+      // Test the connection
+      final client = Supabase.instance.client;
+      final response = await client.from('profiles').select().limit(1);
+      debugPrint('📡 Test query response: $response');
       
     } catch (e, stackTrace) {
       debugPrint('❌ Error initializing Supabase:');

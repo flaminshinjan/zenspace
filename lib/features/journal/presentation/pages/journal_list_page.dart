@@ -1,187 +1,337 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:zenspace/core/theme/app_colors.dart';
-import 'package:zenspace/features/journal/data/repositories/journal_repository.dart';
-import 'package:zenspace/features/journal/domain/models/journal_entry.dart';
-import 'package:zenspace/features/journal/presentation/pages/create_journal_page.dart';
+import '../../../../core/routes/slide_up_route.dart';
+import '../../models/journal_entry.dart';
+import '../../services/journal_service.dart';
+import 'create_journal_page.dart';
+import 'journal_detail_page.dart';
 
 class JournalListPage extends StatefulWidget {
-  const JournalListPage({super.key});
+  final JournalService journalService;
+
+  const JournalListPage({
+    Key? key,
+    required this.journalService,
+  }) : super(key: key);
 
   @override
   State<JournalListPage> createState() => _JournalListPageState();
 }
 
 class _JournalListPageState extends State<JournalListPage> {
-  final _repository = JournalRepository();
-  final _dateFormat = DateFormat('MMMM d, yyyy');
-  final _timeFormat = DateFormat('h:mm a');
-  bool _isLoading = true;
-  List<JournalEntry> _entries = [];
-  String? _error;
+  late Future<List<JournalEntry>> _journalEntriesFuture;
+
+  final List<Map<String, dynamic>> _moods = [
+    {'name': 'Happy', 'emoji': '😊', 'color': Colors.green},
+    {'name': 'Calm', 'emoji': '😌', 'color': Colors.purple},
+    {'name': 'Sad', 'emoji': '😢', 'color': Colors.blue},
+    {'name': 'Anxious', 'emoji': '😰', 'color': Colors.orange},
+    {'name': 'Angry', 'emoji': '😠', 'color': Colors.red},
+  ];
 
   @override
   void initState() {
     super.initState();
-    _loadEntries();
+    _journalEntriesFuture = widget.journalService.getJournalEntries();
   }
 
-  Future<void> _loadEntries() async {
-    try {
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
-
-      final entries = await _repository.getJournalEntries();
-      setState(() {
-        _entries = entries;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
+  Color _getMoodColor(String mood) {
+    final moodData = _moods.firstWhere(
+      (m) => m['name'].toLowerCase() == mood.toLowerCase(),
+      orElse: () => _moods[0],
+    );
+    return moodData['color'] as Color;
   }
 
-  Map<DateTime, List<JournalEntry>> _groupEntriesByDate() {
-    final groupedEntries = <DateTime, List<JournalEntry>>{};
-    
-    for (final entry in _entries) {
+  String _getMoodEmoji(String mood) {
+    final moodData = _moods.firstWhere(
+      (m) => m['name'].toLowerCase() == mood.toLowerCase(),
+      orElse: () => _moods[0],
+    );
+    return moodData['emoji'] as String;
+  }
+
+  Map<DateTime, List<JournalEntry>> _groupEntriesByDate(List<JournalEntry> entries) {
+    final grouped = <DateTime, List<JournalEntry>>{};
+    for (final entry in entries) {
       final date = DateTime(
         entry.createdAt.year,
         entry.createdAt.month,
         entry.createdAt.day,
       );
-      
-      if (!groupedEntries.containsKey(date)) {
-        groupedEntries[date] = [];
+      if (!grouped.containsKey(date)) {
+        grouped[date] = [];
       }
-      groupedEntries[date]!.add(entry);
+      grouped[date]!.add(entry);
     }
-    
     return Map.fromEntries(
-      groupedEntries.entries.toList()
-        ..sort((a, b) => b.key.compareTo(a.key)),
+      grouped.entries.toList()..sort((a, b) => b.key.compareTo(a.key)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
-      appBar: AppBar(
-        title: const Text('My Journal'),
-        backgroundColor: AppColors.bgColor,
-        elevation: 0,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Error loading journal entries',
-                        style: TextStyle(color: AppColors.error),
-                      ),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: _loadEntries,
-                        child: const Text('Retry'),
-                      ),
-                    ],
+      backgroundColor: const Color(0xFFF3F5DE), // Cream background color
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: true,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: const Color(0xFFF3F5DE),
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'My Journal',
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              centerTitle: false,
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFFAE6),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black, width: 2),
                   ),
-                )
-              : _entries.isEmpty
-                  ? Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.add, color: Colors.black),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        SlideUpRoute(
+                          page: CreateJournalPage(
+                            journalService: widget.journalService,
+                          ),
+                        ),
+                      ).then((_) {
+                        setState(() {
+                          _journalEntriesFuture = widget.journalService.getJournalEntries();
+                        });
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: kBottomNavigationBarHeight + 16, // Add bottom padding for navigation bar
+            ),
+            sliver: FutureBuilder<List<JournalEntry>>(
+              future: _journalEntriesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: GoogleFonts.poppins(),
+                      ),
+                    ),
+                  );
+                }
+
+                final entries = snapshot.data ?? [];
+
+                if (entries.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'No journal entries yet',
-                            style: TextStyle(
-                              color: AppColors.textLight,
-                              fontSize: 16,
-                            ),
+                          Icon(
+                            Icons.book_outlined,
+                            size: 64,
+                            color: Colors.black.withOpacity(0.3),
                           ),
                           const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const CreateJournalPage(),
-                                ),
-                              ).then((_) => _loadEntries());
-                            },
-                            child: const Text('Start Journaling'),
+                          Text(
+                            'No journal entries yet',
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tap + to create your first entry',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.6),
+                            ),
                           ),
                         ],
                       ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _loadEntries,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: _groupEntriesByDate().length,
-                        itemBuilder: (context, index) {
-                          final date = _groupEntriesByDate().keys.elementAt(index);
-                          final entries = _groupEntriesByDate()[date]!;
-                          
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Text(
-                                  _dateFormat.format(date),
-                                  style: TextStyle(
-                                    color: AppColors.textLight,
-                                    fontSize: 14,
+                    ),
+                  );
+                }
+
+                final groupedEntries = _groupEntriesByDate(entries);
+                final dates = groupedEntries.keys.toList();
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final date = dates[index];
+                      final dateEntries = groupedEntries[date]!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (index > 0) const SizedBox(height: 24),
+                          Text(
+                            DateFormat.yMMMd().format(date),
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...dateEntries.map((entry) {
+                            final moodColor = _getMoodColor(entry.mood);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFFAE6),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2,
+                                  ),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      offset: Offset(0, 4),
+                                      blurRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        SlideUpRoute(
+                                          page: JournalDetailPage(
+                                            entry: entry,
+                                            journalService: widget.journalService,
+                                          ),
+                                        ),
+                                      ).then((shouldRefresh) {
+                                        if (shouldRefresh == true) {
+                                          setState(() {
+                                            _journalEntriesFuture = widget.journalService.getJournalEntries();
+                                          });
+                                        }
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: Colors.black,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  _getMoodEmoji(entry.mood),
+                                                  style: const TextStyle(fontSize: 20),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      DateFormat.jm().format(entry.createdAt),
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 14,
+                                                        color: Colors.black.withOpacity(0.6),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      entry.mood.toUpperCase(),
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.chevron_right,
+                                                color: Colors.black.withOpacity(0.4),
+                                              ),
+                                            ],
+                                          ),
+                                          if (entry.content.isNotEmpty) ...[
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              entry.content,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                height: 1.5,
+                                                color: Colors.black.withOpacity(0.8),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                              ...entries.map((entry) => Card(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: ListTile(
-                                  leading: Text(
-                                    entry.mood.emoji,
-                                    style: const TextStyle(fontSize: 24),
-                                  ),
-                                  title: Text(
-                                    entry.content,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  subtitle: Text(
-                                    _timeFormat.format(entry.createdAt),
-                                    style: TextStyle(
-                                      color: AppColors.textLight,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    // TODO: Navigate to journal entry detail page
-                                  },
-                                ),
-                              )),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const CreateJournalPage(),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    },
+                    childCount: dates.length,
+                  ),
+                );
+              },
             ),
-          ).then((_) => _loadEntries());
-        },
-        child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

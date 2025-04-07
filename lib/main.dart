@@ -51,12 +51,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       title: AppConfig.instance.name,
       theme: AppTheme.lightTheme,
       home: ScaffoldMessenger(
         child: const SplashPage(),
       ),
-      debugShowCheckedModeBanner: !AppConfig.isProd(),
+      debugShowCheckedModeBanner: false,
     );
   }
 } 
