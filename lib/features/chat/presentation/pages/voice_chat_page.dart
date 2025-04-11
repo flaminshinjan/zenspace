@@ -210,7 +210,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -220,13 +220,13 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
               right: 16,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.lightYellow,
+                  color: AppColors.cardBackground,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.black, width: 1),
+                  border: Border.all(color: AppColors.cardBorder, width: 1),
                 ),
                 child: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close, color: AppColors.textDark),
+                  icon: Icon(Icons.close, color: AppColors.textPrimary),
                 ),
               ),
             ),
@@ -244,7 +244,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                         height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.black, width: 1),
+                          border: Border.all(color: AppColors.cardBorder, width: 1),
                         ),
                         child: ClipOval(
                           child: Image.asset(
@@ -262,14 +262,14 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textDark,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           Text(
                             widget.description,
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textLight,
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -290,17 +290,17 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                             decoration: BoxDecoration(
                               color: _isRecording 
                                 ? AppColors.error 
-                                : AppColors.primaryYellow,
+                                : AppColors.primaryColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: AppColors.black,
+                                color: AppColors.cardBorder,
                                 width: 2,
                               ),
                             ),
                             child: Icon(
                               _isRecording ? Icons.stop : Icons.mic,
                               size: 64,
-                              color: AppColors.textDark,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                         ),
@@ -311,7 +311,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             height: 1.2,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -323,7 +323,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
             ),
             if (_isProcessing)
               Container(
-                color: AppColors.black.withOpacity(0.5),
+                color: AppColors.cardBorder.withOpacity(0.5),
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),

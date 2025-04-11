@@ -32,6 +32,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   speech_to_text: ^7.0.0
   flutter_tts: ^4.2.2
+  google_generative_ai: ^0.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -137,7 +137,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -151,9 +151,9 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.black,
@@ -162,7 +162,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                         ),
                       ],
                     ),
-                    child: Icon(Icons.arrow_back, color: AppColors.textDark),
+                    child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -174,7 +174,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
                     height: 1.1,
-                    color: AppColors.textDark,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -182,7 +182,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                   'Describe the music you want to hear',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppColors.textLight,
+                    color: AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -191,9 +191,9 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.lightYellow,
+                    color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.black, width: 1),
+                    border: Border.all(color: AppColors.cardBorder, width: 1),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black,
@@ -209,12 +209,12 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                         maxLines: 3,
                         style: TextStyle(
                           fontSize: 16,
-                          color: AppColors.textDark,
+                          color: AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'e.g. A calming piano melody with gentle rain in the background...',
                           hintStyle: TextStyle(
-                            color: AppColors.textLight,
+                            color: AppColors.textSecondary,
                           ),
                           border: InputBorder.none,
                         ),
@@ -225,12 +225,12 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                         child: ElevatedButton(
                           onPressed: _isGenerating ? null : () => _generateMusic(_promptController.text),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryYellow,
-                            foregroundColor: AppColors.textDark,
+                            backgroundColor: AppColors.primaryColor,
+                            foregroundColor: AppColors.textPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: AppColors.black),
+                              side: BorderSide(color: AppColors.cardBorder),
                             ),
                           ),
                           child: _isGenerating
@@ -259,7 +259,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -281,16 +281,16 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.lightYellow,
+                          color: AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.black),
+                          border: Border.all(color: AppColors.cardBorder),
                         ),
                         child: Center(
                           child: Text(
                             _samplePrompts[index],
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textDark,
+                              color: AppColors.textPrimary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -307,9 +307,9 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.black,
@@ -324,21 +324,21 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                           width: 120,
                           height: 120,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryYellow,
+                            color: AppColors.primaryColor,
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.black),
+                            border: Border.all(color: AppColors.cardBorder),
                           ),
                           child: Icon(
                             _isPlaying ? Icons.pause : Icons.play_arrow,
                             size: 48,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 24),
                         Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryYellow,
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -349,13 +349,13 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                             Text(
                               '0:00',
                               style: TextStyle(
-                                color: AppColors.textLight,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                             Text(
                               '3:30',
                               style: TextStyle(
-                                color: AppColors.textLight,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],

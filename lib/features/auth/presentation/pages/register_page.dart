@@ -61,15 +61,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.backgroundColor,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.textDark),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
         title: Text(
           'Create Account',
           style: TextStyle(
-            color: AppColors.textDark,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
+                      color: AppColors.textPrimary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -98,24 +98,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     'Create an account to start your mindfulness journey',
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppColors.textLight,
+                      color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: TextStyle(color: AppColors.textLight),
-                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.textDark),
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.textPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
@@ -133,17 +133,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: TextFormField(
                       controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle: TextStyle(color: AppColors.textLight),
-                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textDark),
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
@@ -161,17 +161,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        labelStyle: TextStyle(color: AppColors.textLight),
-                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textDark),
+                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
@@ -201,12 +201,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _signUp,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryYellow,
+                        backgroundColor: AppColors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(
-                            color: AppColors.black,
+                            color: AppColors.cardBorder,
                             width: 2,
                           ),
                         ),
@@ -218,14 +218,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.textDark,
+                                color: AppColors.textPrimary,
                               ),
                             )
                           : Text(
                               'Sign Up',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColors.textDark,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

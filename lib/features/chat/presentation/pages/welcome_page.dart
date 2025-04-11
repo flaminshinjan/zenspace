@@ -9,7 +9,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -17,10 +17,10 @@ class WelcomePage extends StatelessWidget {
             width: double.infinity,
             height: 700,
             decoration: BoxDecoration(
-              color: AppColors.lightYellow,
+              color: AppColors.cardBackground,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
-                color: AppColors.black,
+                color: AppColors.cardBorder,
                 width: 2,
               ),
               boxShadow: const [
@@ -48,7 +48,7 @@ class WelcomePage extends StatelessWidget {
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
-                          color: AppColors.textDark,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -91,7 +91,7 @@ class WelcomePage extends StatelessWidget {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryYellow,
+                              backgroundColor: AppColors.primaryColor,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 32,
                                 vertical: 16,
@@ -99,7 +99,7 @@ class WelcomePage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
-                                  color: AppColors.black,
+                                  color: AppColors.cardBorder,
                                   width: 2,
                                 ),
                               ),
@@ -109,7 +109,7 @@ class WelcomePage extends StatelessWidget {
                               'get started',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColors.textDark,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: AppColors.black,
+              color: AppColors.cardBorder,
               width: 2,
             ),
           ),
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
+                      color: AppColors.textPrimary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -222,31 +222,31 @@ class _LoginPageState extends State<LoginPage> {
                     'Sign in to continue your mindfulness journey',
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppColors.textLight,
+                      color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: TextStyle(
-                        color: AppColors.textDark,
+                        color: AppColors.textPrimary,
                         fontSize: 16,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
                         hintStyle: TextStyle(
-                          color: AppColors.textLight.withOpacity(0.7),
+                          color: AppColors.textSecondary.withOpacity(0.7),
                           fontSize: 16,
                         ),
-                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.textDark),
+                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.textPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         filled: true,
@@ -270,28 +270,28 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.lightYellow,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       style: TextStyle(
-                        color: AppColors.textDark,
+                        color: AppColors.textPrimary,
                         fontSize: 16,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
                         hintStyle: TextStyle(
-                          color: AppColors.textLight.withOpacity(0.7),
+                          color: AppColors.textSecondary.withOpacity(0.7),
                           fontSize: 16,
                         ),
-                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textDark),
+                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                           ),
                           onPressed: () {
                             setState(() {
@@ -334,12 +334,12 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _signIn,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryYellow,
+                        backgroundColor: AppColors.primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(
-                            color: AppColors.black,
+                            color: AppColors.cardBorder,
                             width: 2,
                           ),
                         ),
@@ -351,14 +351,14 @@ class _LoginPageState extends State<LoginPage> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.textDark,
+                                color: AppColors.textPrimary,
                               ),
                             )
                           : Text(
                               'Sign In',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColors.textDark,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -367,18 +367,18 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      Expanded(child: Divider(color: AppColors.textLight)),
+                      Expanded(child: Divider(color: AppColors.textSecondary)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'OR',
                           style: TextStyle(
-                            color: AppColors.textLight,
+                            color: AppColors.textSecondary,
                             fontSize: 14,
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: AppColors.textLight)),
+                      Expanded(child: Divider(color: AppColors.textSecondary)),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -409,7 +409,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       'Don\'t have an account? Sign Up',
                       style: TextStyle(
-                        color: AppColors.textLight,
+                        color: AppColors.textSecondary,
                         decoration: TextDecoration.underline,
                       ),
                     ),

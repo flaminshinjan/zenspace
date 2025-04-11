@@ -8,7 +8,7 @@ class OnboardingCompletePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -17,13 +17,13 @@ class OnboardingCompletePage extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppColors.lightYellow,
+                color: AppColors.cardBackground,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.check,
                 size: 60,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 32),
@@ -32,7 +32,7 @@ class OnboardingCompletePage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -40,7 +40,7 @@ class OnboardingCompletePage extends StatelessWidget {
               'You\'re all set to start your ZenSpace journey',
               style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textLight,
+                color: AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: 48),
@@ -54,7 +54,7 @@ class OnboardingCompletePage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryYellow,
+                backgroundColor: AppColors.primaryColor,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 16,
@@ -64,7 +64,7 @@ class OnboardingCompletePage extends StatelessWidget {
                 'Get Started',
                 style: TextStyle(
                   fontSize: 18,
-                  color: AppColors.textDark,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),

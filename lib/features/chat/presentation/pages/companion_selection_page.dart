@@ -24,7 +24,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -37,9 +37,9 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.lightYellow,
+                    color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.black, width: 1),
+                    border: Border.all(color: AppColors.cardBorder, width: 1),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black,
@@ -48,7 +48,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                       ),
                     ],
                   ),
-                  child: Icon(Icons.arrow_back, color: AppColors.textDark),
+                  child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
                 ),
               ),
               const SizedBox(height: 24),
@@ -60,7 +60,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                   height: 1.1,
-                  color: AppColors.textDark,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -68,7 +68,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                 'Select your AI companion to chat with',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textLight,
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 32),
@@ -140,23 +140,23 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                           );
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryYellow,
+                    backgroundColor: AppColors.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                       side: BorderSide(
-                        color: AppColors.black,
+                        color: AppColors.cardBorder,
                         width: 2,
                       ),
                     ),
-                    disabledBackgroundColor: AppColors.textLight.withOpacity(0.3),
+                    disabledBackgroundColor: AppColors.textSecondary.withOpacity(0.3),
                   ),
                   child: Text(
                     widget.isVoiceMode ? 'start talking' : 'start chatting',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -188,10 +188,10 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryYellow : AppColors.lightYellow,
+          color: isSelected ? AppColors.primaryColor : AppColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.black,
+            color: AppColors.cardBorder,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -220,14 +220,14 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
             ),
             Text(
               description,
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textLight,
+                color: AppColors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

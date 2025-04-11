@@ -29,7 +29,7 @@ class _JournalPageState extends State<JournalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -46,9 +46,9 @@ class _JournalPageState extends State<JournalPage> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.lightYellow,
+                            color: AppColors.cardBackground,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.black, width: 1),
+                            border: Border.all(color: AppColors.cardBorder, width: 1),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.black,
@@ -57,7 +57,7 @@ class _JournalPageState extends State<JournalPage> {
                               ),
                             ],
                           ),
-                          child: Icon(Icons.arrow_back, color: AppColors.textDark),
+                          child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -67,7 +67,7 @@ class _JournalPageState extends State<JournalPage> {
                         _getFormattedDate(),
                         style: TextStyle(
                           fontSize: 16,
-                          color: AppColors.textLight,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -81,7 +81,7 @@ class _JournalPageState extends State<JournalPage> {
                             style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           Image.asset(
@@ -97,9 +97,9 @@ class _JournalPageState extends State<JournalPage> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.lightYellow,
+                          color: AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.black, width: 1),
+                          border: Border.all(color: AppColors.cardBorder, width: 1),
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.black,
@@ -115,13 +115,13 @@ class _JournalPageState extends State<JournalPage> {
                           style: TextStyle(
                             fontSize: 16,
                             height: 1.5,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Write your thoughts...',
                             hintStyle: TextStyle(
-                              color: AppColors.textLight,
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ),
@@ -136,12 +136,12 @@ class _JournalPageState extends State<JournalPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.lightYellow,
+                color: AppColors.cardBackground,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                border: Border.all(color: AppColors.black, width: 1),
+                border: Border.all(color: AppColors.cardBorder, width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.black.withOpacity(0.1),
+                    color: AppColors.cardBorder.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -151,27 +151,27 @@ class _JournalPageState extends State<JournalPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.text_fields, color: AppColors.textDark),
+                    icon: Icon(Icons.text_fields, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Text style',
                   ),
                   IconButton(
-                    icon: Icon(Icons.image_outlined, color: AppColors.textDark),
+                    icon: Icon(Icons.image_outlined, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Add image',
                   ),
                   IconButton(
-                    icon: Icon(Icons.mic_none_rounded, color: AppColors.textDark),
+                    icon: Icon(Icons.mic_none_rounded, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Voice input',
                   ),
                   IconButton(
-                    icon: Icon(Icons.edit_outlined, color: AppColors.textDark),
+                    icon: Icon(Icons.edit_outlined, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Draw',
                   ),
                   IconButton(
-                    icon: Icon(Icons.more_horiz, color: AppColors.textDark),
+                    icon: Icon(Icons.more_horiz, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'More options',
                   ),
