@@ -73,7 +73,6 @@ class _SplashPageState extends State<SplashPage> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 24),
-            const CircularProgressIndicator(),
           ],
         ),
       ),

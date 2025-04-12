@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
+import 'package:zenspace/core/routes/app_routes.dart';
 import 'package:zenspace/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:zenspace/features/chat/presentation/pages/talk_with_ai_page.dart';
 import 'package:zenspace/features/music/presentation/pages/make_music_page.dart';
 import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
-import 'package:zenspace/features/journal/services/journal_service.dart';
-import 'package:zenspace/features/journal/presentation/pages/journal_list_page.dart';
+import 'package:zenspace/features/journal/presentation/screens/journal_screen.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,191 +16,123 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with RouteAware {
   int _currentIndex = 0;
-  late final JournalService _journalService;
-
-  @override
-  void initState() {
-    super.initState();
-    _journalService = JournalService(Supabase.instance.client);
-  }
 
   late final List<Widget> _pages = [
     const DashboardPage(),
     const TalkWithAIPage(),
-    JournalListPage(journalService: _journalService),
+    const JournalScreen(),
     const MakeMusicPage(),
     const ProfilePage(),
   ];
 
-  void _onTabTapped(int index) {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _currentIndex = index;
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check for initial tab selection from route arguments
+    final settings = ModalRoute.of(context)?.settings;
+    if (settings?.arguments != null) {
+      final args = settings!.arguments as Map<String, dynamic>;
+      if (args.containsKey('initialTab')) {
+        setState(() {
+          _currentIndex = args['initialTab'] as int;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF3F5DE),
-      body: Stack(
-        children: [
-          // Page content
-          _pages[_currentIndex],
-          
-          // Floating bottom navigation
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 25,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFAE6),
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(
-                  color: Colors.black,
-                  width: 3,
+    return Navigator(
+      onGenerateRoute: (settings) {
+        // Handle journal routes
+        if (settings.name?.startsWith('/journal/') == true) {
+          return AppRoutes.onGenerateRoute(settings);
+        }
+        
+        // Default page (main tab view)
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            backgroundColor: const Color(0xFFF3F5DE),
+            body: Stack(
+              children: [
+                // Page content
+                IndexedStack(
+                  index: _currentIndex,
+                  children: _pages,
                 ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(0, 8),
-                    spreadRadius: 0,
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Home
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTabTapped(0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AssetConstants.dogHouse,
-                            width: 37,
-                            height: 37,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: _currentIndex == 0 ? const Color(0xFFF7CC57) : Colors.transparent,
-                          ),
-                        ],
+                
+                // Floating bottom navigation
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: 25,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFFAE6),
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 3,
                       ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black,
+                          offset: Offset(0, 8),
+                          spreadRadius: 0,
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildNavItem(0, AssetConstants.dogHouse),
+                        _buildNavItem(1, AssetConstants.runningDog),
+                        _buildNavItem(2, AssetConstants.happyDog),
+                        _buildNavItem(3, AssetConstants.meditatingDog),
+                        _buildNavItem(4, AssetConstants.happyDog),
+                      ],
                     ),
                   ),
-                  // Talk with AI
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTabTapped(1),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AssetConstants.runningDog,
-                            width: 37,
-                            height: 37,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: _currentIndex == 1 ? const Color(0xFFF7CC57) : Colors.transparent,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Journal
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTabTapped(2),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AssetConstants.happyDog,
-                            width: 37,
-                            height: 37,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: _currentIndex == 2 ? const Color(0xFFF7CC57) : Colors.transparent,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Make Music
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTabTapped(3),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AssetConstants.meditatingDog,
-                            width: 37,
-                            height: 37,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: _currentIndex == 3 ? const Color(0xFFF7CC57) : Colors.transparent,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Profile
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTabTapped(4),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AssetConstants.happyDog,
-                            width: 37,
-                            height: 37,
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 24,
-                            height: 3,
-                            color: _currentIndex == 4 ? const Color(0xFFF7CC57) : Colors.transparent,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
+        );
+      },
+    );
+  }
+
+  Widget _buildNavItem(int index, String assetPath) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              assetPath,
+              width: 37,
+              height: 37,
+            ),
+            const SizedBox(height: 4),
+            Container(
+              width: 24,
+              height: 3,
+              color: _currentIndex == index ? const Color(0xFFF7CC57) : Colors.transparent,
+            ),
+          ],
+        ),
       ),
     );
   }

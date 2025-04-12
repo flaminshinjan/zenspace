@@ -6,16 +6,15 @@ import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
 import 'package:zenspace/features/home/presentation/widgets/talk_to_pawpal_widget.dart';
 import 'package:zenspace/features/journal/presentation/pages/journal_page.dart';
 import 'package:zenspace/features/therapists/presentation/pages/therapists_page.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
-  // Color constants
-  static const Color primaryYellow = Color(0xFFFFC107);  // Main yellow for buttons and highlights
-  static const Color lightYellow = Color(0xFFFFF3D0);    // Light yellow for cards
-  static const Color bgColor = Color(0xFFFFFBF2);        // Very light yellow-white background
-  static const Color textDark = Color(0xFF2C2C2C);       // Dark text color
-  static const Color textLight = Color(0xFF757575);      // Light text color
+  // Custom dark colors
+  static const Color darkGray1 = Color(0xFF1E1E1E);
+  static const Color darkGray2 = Color(0xFF2C2C2C);
+  static const Color darkGray3 = Color(0xFF3D3D3D);
 
   void _navigateToPage(BuildContext context, int index) {
     switch (index) {
@@ -45,7 +44,7 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
           SafeArea(
@@ -61,7 +60,7 @@ class DashboardPage extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: lightYellow,
+                            color: darkGray2,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -77,7 +76,7 @@ class DashboardPage extends StatelessWidget {
                                         'Good Afternoon,',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: textDark,
+                                          color: AppColors.textPrimary,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -86,7 +85,7 @@ class DashboardPage extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: textDark,
+                                          color: AppColors.textPrimary,
                                         ),
                                       ),
                                     ],
@@ -95,7 +94,7 @@ class DashboardPage extends StatelessWidget {
                                     '@shinzushinjan',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: textLight,
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -112,7 +111,7 @@ class DashboardPage extends StatelessWidget {
                           height: 24,
                         ),
                         const SizedBox(width: 16),
-                        Icon(Icons.notifications_outlined, size: 24, color: textDark),
+                        Icon(Icons.notifications_outlined, size: 24, color: AppColors.textPrimary),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -132,9 +131,9 @@ class DashboardPage extends StatelessWidget {
                       child: Container(
                         height: 200,
                         decoration: BoxDecoration(
-                          color: lightYellow,
+                          color: darkGray2,
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: Colors.black, width: 2),
+                          border: Border.all(color: darkGray3, width: 2),
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.black,
@@ -158,7 +157,7 @@ class DashboardPage extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(0),
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: darkGray2,
                                   borderRadius: BorderRadius.circular(24),
                                 ),
                                 child: Image.asset(
@@ -190,9 +189,9 @@ class DashboardPage extends StatelessWidget {
                             child: Container(
                               height: 170,
                               decoration: BoxDecoration(
-                                color: lightYellow,
+                                color: darkGray2,
                                 borderRadius: BorderRadius.circular(32),
-                                border: Border.all(color: Colors.black, width: 2),
+                                border: Border.all(color: darkGray3, width: 2),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: Colors.black,
@@ -251,9 +250,9 @@ class DashboardPage extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: lightYellow,
+                          color: darkGray2,
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: Colors.black, width: 2),
+                          border: Border.all(color: darkGray3, width: 2),
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.black,
@@ -279,7 +278,7 @@ class DashboardPage extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: textDark,
+                                      color: AppColors.textPrimary,
                                     ),
                                   ),
                                   Image.asset(
@@ -290,7 +289,7 @@ class DashboardPage extends StatelessWidget {
                                     'Heal Mind, Soul, Heart',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: textLight,
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -299,7 +298,7 @@ class DashboardPage extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(0),
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: darkGray2,
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               child: Image.asset(

@@ -9,7 +9,7 @@ class ChatOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -19,10 +19,10 @@ class ChatOptionsPage extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.lightYellow,
+                    color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(32),
                     border: Border.all(
-                      color: AppColors.black,
+                      color: AppColors.cardBorder,
                       width: 2,
                     ),
                     boxShadow: const [
@@ -43,7 +43,7 @@ class ChatOptionsPage extends StatelessWidget {
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
-                          color: AppColors.textDark,
+                          color: AppColors.textPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -85,12 +85,12 @@ class ChatOptionsPage extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryYellow,
+                          backgroundColor: AppColors.primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
-                              color: AppColors.black,
+                              color: AppColors.cardBorder,
                               width: 2,
                             ),
                           ),
@@ -100,7 +100,7 @@ class ChatOptionsPage extends StatelessWidget {
                           'talk',
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -139,12 +139,12 @@ class ChatOptionsPage extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryYellow,
+                          backgroundColor: AppColors.primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
-                              color: AppColors.black,
+                              color: AppColors.cardBorder,
                               width: 2,
                             ),
                           ),
@@ -154,7 +154,7 @@ class ChatOptionsPage extends StatelessWidget {
                           'text',
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColors.textDark,
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
