@@ -20,9 +20,11 @@ class AssetConstants {
   static const String runningDogIcon = 'assets/icons/nav/running_dog.png';
   static const String meditatingDogIcon = 'assets/icons/nav/meditating_dog.png';
   static const String happyDogIcon = 'assets/icons/nav/happy_dog.png';
+  static const String meditationIcon = 'assets/icons/nav/meditation.png';
 
   // Images
   static const String dogHouse = 'assets/images/dog_house.png';
+  static const String meditationHuman = 'assets/images/meditating_human.png';
   static const String happyDog = 'assets/images/happy_dog.png';
   static const String journalDog = 'assets/images/journal_dog.png';
   static const String meditatingDog = 'assets/images/meditating_dog.png';
@@ -33,6 +35,7 @@ class AssetConstants {
   static const String walkingDog = 'assets/images/walking_dog.png';
   static const String journalCard = 'assets/images/journal_card.png';
   static const String rythm = "assets/images/rythm.png";
+  static const String rocky = "assets/images/max.png";
 
   // Logo
   static const String logo = 'assets/images/logo.png';

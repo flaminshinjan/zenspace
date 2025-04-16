@@ -257,13 +257,6 @@ class _JournalDetailPageState extends State<JournalDetailPage> {
                 color: const Color(0xFFFFFAE6),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.black, width: 2),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(0, 4),
-                    blurRadius: 0,
-                  ),
-                ],
               ),
               child: Row(
                 children: [
@@ -356,13 +349,6 @@ class _JournalDetailPageState extends State<JournalDetailPage> {
                   color: const Color(0xFFFFFAE6),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.black, width: 2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                    ),
-                  ],
                 ),
                 child: TextFormField(
                   controller: _contentController,
@@ -390,13 +376,6 @@ class _JournalDetailPageState extends State<JournalDetailPage> {
                   color: const Color(0xFFFFFAE6),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.black, width: 2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                    ),
-                  ],
                 ),
                 child: Text(
                   widget.entry.content,
@@ -414,13 +393,6 @@ class _JournalDetailPageState extends State<JournalDetailPage> {
                 color: const Color(0xFFFFFAE6),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.black, width: 2),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(0, 4),
-                    blurRadius: 0,
-                  ),
-                ],
               ),
               child: Material(
                 color: Colors.transparent,

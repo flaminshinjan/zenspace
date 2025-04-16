@@ -1,48 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
 import 'package:zenspace/features/chat/presentation/pages/talk_with_ai_page.dart';
+import 'package:zenspace/features/journal/presentation/screens/journal_screen.dart';
 import 'package:zenspace/features/music/presentation/pages/make_music_page.dart';
 import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
 import 'package:zenspace/features/home/presentation/widgets/talk_to_pawpal_widget.dart';
 import 'package:zenspace/features/journal/presentation/pages/journal_page.dart';
 import 'package:zenspace/features/therapists/presentation/pages/therapists_page.dart';
+import 'package:zenspace/features/meditation/presentation/pages/meditation_page.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
+import 'package:intl/intl.dart';
+import 'package:zenspace/features/journal/services/journal_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zenspace/features/journal/models/journal_entry.dart';
 
-class DashboardPage extends StatelessWidget {
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
+
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
-  // Custom dark colors
-  static const Color darkGray1 = Color(0xFF1E1E1E);
-  static const Color darkGray2 = Color(0xFF2C2C2C);
-  static const Color darkGray3 = Color(0xFF3D3D3D);
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
 
-  void _navigateToPage(BuildContext context, int index) {
-    switch (index) {
-      case 0: // Home
-        break; // Already on home
-      case 1: // Talk with AI
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const TalkWithAIPage()),
-        );
-        break;
-      case 2: // Make Music
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MakeMusicPage()),
-        );
-        break;
-      case 3: // Profile
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-        break;
+class _DashboardPageState extends State<DashboardPage> {
+  // Custom dark colors
+  static const Color darkGray1 = Color(0xFF1A1A1A);
+  static const Color darkGray2 = Color(0xFF222222);
+  static const Color darkGray3 = Color(0xFF2A2A2A);
+
+  late final JournalService _journalService;
+  late Future<List<JournalEntry>> _journalEntries;
+
+  @override
+  void initState() {
+    super.initState();
+    _journalService = JournalService(Supabase.instance.client);
+    _journalEntries = _journalService.getJournalEntries();
+  }
+
+  String _getMoodEmoji(String mood) {
+    switch (mood.toLowerCase()) {
+      case 'happy':
+        return '😊';
+      case 'sad':
+        return '😢';
+      case 'angry':
+        return '😠';
+      case 'anxious':
+        return '😰';
+      case 'calm':
+        return '😌';
+      case 'excited':
+        return '🤩';
+      case 'tired':
+        return '😴';
+      case 'grateful':
+        return '🙏';
+      case 'neutral':
+        return '😐';
+      default:
+        return '😊';
     }
+  }
+
+  String _getMoodMessage(String mood) {
+    switch (mood.toLowerCase()) {
+      case 'happy':
+        return 'Keep up the good vibes!';
+      case 'sad':
+        return 'It\'s okay to feel this way';
+      case 'angry':
+        return 'Take a deep breath';
+      case 'anxious':
+        return 'You\'re stronger than this feeling';
+      case 'calm':
+        return 'Peace is within you';
+      case 'excited':
+        return 'Enjoy the moment!';
+      case 'tired':
+        return 'Rest when you need to';
+      case 'grateful':
+        return 'Gratitude is powerful';
+      case 'neutral':
+        return 'Every feeling is valid';
+      default:
+        return 'Keep up the good vibes!';
+    }
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
   }
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final formattedDate = DateFormat('EEEE, MMMM d').format(now);
+    
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: Stack(
@@ -58,67 +120,179 @@ class DashboardPage extends StatelessWidget {
                       children: [
                         // Profile section
                         Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: darkGray2,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             children: [
-                              
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: darkGray3,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.person, color: Colors.white, size: 18),
+                              ),
                               const SizedBox(width: 8),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Good Afternoon,',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Shinjan',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                   Text(
-                                    '@shinzushinjan',
+                                    _getGreeting(),
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: AppColors.textSecondary,
                                     ),
                                   ),
+                                  Text(
+                                    'Shinjan',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              const SizedBox(width: 8),
                             ],
                           ),
                         ),
-                        const Spacer(),
-                        // Action buttons
-                        Image.asset(
-                          AssetConstants.normalPaw,
-                          width: 24,
-                          height: 24,
+                        
+                      ],
+                    ),
+                    const TalkToPawpalWidget(),
+                    // Insights Grid
+                    Column(
+                      children: [
+                        // First row - Large mood card
+                        FutureBuilder<List<JournalEntry>>(
+                          future: _journalEntries,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: darkGray2,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: darkGray3, width: 1),
+                                ),
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            final entries = snapshot.data ?? [];
+                            final latestEntry = entries.isNotEmpty ? entries.first : null;
+                            final mood = latestEntry?.mood ?? 'neutral';
+                            final moodEmoji = _getMoodEmoji(mood);
+                            final moodMessage = _getMoodMessage(mood);
+
+                            return Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: darkGray2,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: darkGray3, width: 1),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Current Mood',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColors.textSecondary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '$moodEmoji ${mood.capitalize()}',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.textPrimary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            moodMessage,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: AppColors.textSecondary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      color: darkGray3,
+                                      borderRadius: const BorderRadius.only(
+                                        topRight: Radius.circular(16),
+                                        bottomRight: Radius.circular(16),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        moodEmoji,
+                                        style: const TextStyle(fontSize: 32),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                        const SizedBox(width: 16),
-                        Icon(Icons.notifications_outlined, size: 24, color: AppColors.textPrimary),
+                        const SizedBox(height: 12),
+                        
+                        // Second row - Two medium cards
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildMediumCard(
+                                'Meditation',
+                                '15 min',
+                                'Today\'s session',
+                                Icons.self_improvement,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: FutureBuilder<List<JournalEntry>>(
+                                future: _journalEntries,
+                                builder: (context, snapshot) {
+                                  final count = snapshot.data?.length ?? 0;
+                                  return _buildMediumCard(
+                                    'Journal',
+                                    '$count entries',
+                                    'This week',
+                                    Icons.edit_note,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
                     
                     // Talk to Pawpal Widget
-                    const TalkToPawpalWidget(),
-                    const SizedBox(height: 24),
+                    
                     
                     // Walking illustration card
                     GestureDetector(
@@ -131,24 +305,17 @@ class DashboardPage extends StatelessWidget {
                       child: Container(
                         height: 200,
                         decoration: BoxDecoration(
-                          color: darkGray2,
+                          color: Color(0xff1D1D1D),
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: darkGray3, width: 2),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: Offset(0, 6),
-                              spreadRadius: 0,
-                              blurRadius: 0,
-                            ),
-                          ],
+                         
                         ),
                         child: Stack(
                           children: [
                             Positioned.fill(
                               child: Image.asset(
                                 AssetConstants.walkingDog,
-                                fit: BoxFit.contain,
+                                
+                                height: 10,
                               ),
                             ),
                             Positioned(
@@ -191,15 +358,7 @@ class DashboardPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: darkGray2,
                                 borderRadius: BorderRadius.circular(32),
-                                border: Border.all(color: darkGray3, width: 2),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    offset: Offset(0, 6),
-                                    spreadRadius: 0,
-                                    blurRadius: 0,
-                                  ),
-                                ],
+                                
                               ),
                               child: Stack(
                                 children: [
@@ -223,7 +382,7 @@ class DashboardPage extends StatelessWidget {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const JournalPage()),
+                                MaterialPageRoute(builder: (context) => const JournalScreen()),
                               );
                             },
                             child: Container(
@@ -244,67 +403,153 @@ class DashboardPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const MakeMusicPage()),
+                          MaterialPageRoute(builder: (context) => const MeditationPage()),
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(16),
+                        height: 160,
                         decoration: BoxDecoration(
                           color: darkGray2,
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: darkGray3, width: 2),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: Offset(0, 6),
-                              spreadRadius: 0,
-                              blurRadius: 0,
-                            ),
-                          ],
                         ),
-                        child: Row(
+                        child: Stack(
                           children: [
-                            Image.asset(
-                              AssetConstants.meditatingDog,
-                              height: 100,
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: 120,
+                              child: Image.asset(
+                                AssetConstants.meditationHuman,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
+                            Positioned(
+                              left: 16,
+                              top: 16,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'feel your own mind.',
+                                    'Guided Meditation',
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  Image.asset(
-                                    AssetConstants.rythm,
-                                    height: 50,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Find peace through',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
                                   ),
                                   Text(
-                                    'Heal Mind, Soul, Heart',
+                                    'guided sessions',
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.textSecondary,
+                                      fontSize: 14,
+                                      color: Colors.white.withOpacity(0.8),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                color: darkGray2,
-                                borderRadius: BorderRadius.circular(24),
+                            Positioned(
+                              left: 16,
+                              bottom: 16,
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: darkGray3.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    
+                    // Music Generation card
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MakeMusicPage()),
+                        );
+                      },
+                      child: Container(
+                        height: 160,
+                        decoration: BoxDecoration(
+                          color: darkGray2,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: 140,
                               child: Image.asset(
-                                AssetConstants.pawButton,
-                                width: 50,
-                                height: 50,
+                                AssetConstants.rocky,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              left: 16,
+                              top: 16,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Create Music',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Generate your own',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                  Text(
+                                    'unique melodies',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: 16,
+                              bottom: 16,
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: darkGray3.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
                             ),
                           ],
@@ -314,6 +559,72 @@ class DashboardPage extends StatelessWidget {
                     const SizedBox(height: 100), // Bottom padding for navigation bar
                   ],
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMediumCard(String title, String value, String subtitle, IconData icon) {
+    return Container(
+      height: 90,
+      decoration: BoxDecoration(
+        color: darkGray2,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: darkGray3, width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: 50,
+            decoration: BoxDecoration(
+              color: darkGray3,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                size: 24,
+                color: Colors.white,
               ),
             ),
           ),

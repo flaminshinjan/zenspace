@@ -157,7 +157,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -169,9 +169,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back,
-                      color: Colors.black87,
+                      color: Colors.white,
                       size: 28,
                     ),
                     onPressed: _currentQuestionIndex > 0 ? _onBack : null,
@@ -181,16 +181,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                   ),
                   TextButton(
                     onPressed: _onNext,
-                    child: Text(
+                    child: const Text(
                       'Skip',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: Colors.grey,
                       ),
                     ),
                   ),
@@ -204,16 +204,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Colors.white,
                 ),
               ),
               if (currentQuestion['subtitle'] != null) ...[
                 const SizedBox(height: 12),
                 Text(
                   currentQuestion['subtitle'],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                   ),
                 ),
               ],
@@ -228,9 +228,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
                     currentQuestion['footer'],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Colors.grey,
                       fontStyle: FontStyle.italic,
                     ),
                     textAlign: TextAlign.center,
@@ -246,13 +246,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     onPressed: selectedAnswers.isNotEmpty ? _onNext : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFC107),
-                      foregroundColor: Colors.black87,
+                      foregroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(color: Colors.black, width: 2),
+                        side: const BorderSide(color: Colors.white, width: 2),
                       ),
                       elevation: 4,
-                      shadowColor: Colors.black,
+                      shadowColor: Colors.white,
                     ),
                     child: Text(
                       _currentQuestionIndex == _questions.length - 1 ? 'Complete' : 'Continue',
@@ -287,18 +287,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 time == 'DAY' ? Icons.wb_sunny :
                 Icons.mode_night_outlined,
                 size: 32,
-                color: Colors.black87,
+                color: Colors.white,
               ),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
+                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFF2C2C2C),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black, width: 2),
+                  border: Border.all(color: Colors.white, width: 2),
                   boxShadow: isSelected ? [
                     const BoxShadow(
-                      color: Colors.black,
+                      color: Colors.white,
                       offset: Offset(0, 4),
                       blurRadius: 0,
                     ),
@@ -311,7 +311,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -319,7 +319,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       timeValue,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -340,9 +340,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             padding: const EdgeInsets.only(bottom: 24),
             child: Text(
               question['date'],
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Colors.grey,
               ),
             ),
           ),
@@ -360,12 +360,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
+                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFF2C2C2C),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 2),
+                  border: Border.all(color: Colors.white, width: 2),
                   boxShadow: isSelected ? [
                     const BoxShadow(
-                      color: Colors.black,
+                      color: Colors.white,
                       offset: Offset(0, 4),
                       blurRadius: 0,
                     ),
@@ -397,15 +397,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFFFF3D0),
+                color: isSelected ? const Color(0xFFFFC107) : const Color(0xFF2C2C2C),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.black,
+                  color: Colors.white,
                   width: 2,
                 ),
                 boxShadow: isSelected ? [
                   const BoxShadow(
-                    color: Colors.black,
+                    color: Colors.white,
                     offset: Offset(0, 4),
                     blurRadius: 0,
                   ),
@@ -419,14 +419,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   if (isSelected)
                     const Icon(
                       Icons.check_circle,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                 ],
               ),

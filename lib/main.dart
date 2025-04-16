@@ -5,6 +5,7 @@ import 'package:zenspace/core/config/flavor_config.dart';
 import 'package:zenspace/core/config/supabase_config.dart';
 import 'package:zenspace/core/theme/app_theme.dart';
 import 'package:zenspace/features/auth/presentation/pages/splash_page.dart';
+import 'package:device_preview/device_preview.dart';
 
 // This will be set by the build system
 const String flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
@@ -29,7 +30,12 @@ void main() async {
     debugPrint('❌ Error during app initialization: $e');
   }
   
-  runApp(const MyApp());
+  runApp(
+    DevicePreview(
+      enabled: AppConfig.isDev(),
+      builder: (context) => const MyApp(),
+    ),
+  );
 }
 
 Flavor _getFlavorFromString(String flavor) {
@@ -59,6 +65,9 @@ class MyApp extends StatelessWidget {
         child: const SplashPage(),
       ),
       debugShowCheckedModeBanner: false,
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
     );
   }
 } 

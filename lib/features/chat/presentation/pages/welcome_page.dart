@@ -43,7 +43,7 @@ class WelcomePage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 30),
                       Text(
-                        "let's paws and\ntalk it off\none wag at a\ntime!",
+                        "let's pause and\ntalk it off\none at a\ntime!",
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class WelcomePage extends StatelessWidget {
                     children: [
                       Positioned(
                         bottom: 0,
-                        left: 0,
+                        left: 20,
                         child: Image.asset(
                           'assets/images/walking_dog_banner.png',
                           height: 300,
@@ -67,7 +67,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        bottom: 32,
+                        bottom: 20,
                         right: 24,
                         child: Container(
                           decoration: BoxDecoration(
@@ -91,7 +91,7 @@ class WelcomePage extends StatelessWidget {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
+                              backgroundColor: AppColors.error,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 32,
                                 vertical: 16,
@@ -119,6 +119,7 @@ class WelcomePage extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 50),
               ],
             ),
           ),

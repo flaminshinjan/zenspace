@@ -25,14 +25,6 @@ class ChatOptionsPage extends StatelessWidget {
                       color: AppColors.cardBorder,
                       width: 2,
                     ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: Offset(0, 8),
-                        spreadRadius: 0,
-                        blurRadius: 0,
-                      ),
-                    ],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -64,14 +56,6 @@ class ChatOptionsPage extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                            blurRadius: 0,
-                          ),
-                        ],
                       ),
                       child: ElevatedButton(
                         onPressed: () {
@@ -112,14 +96,6 @@ class ChatOptionsPage extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                            blurRadius: 0,
-                          ),
-                        ],
                       ),
                       child: ElevatedButton(
                         onPressed: () {

@@ -127,7 +127,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
           // Send transcribed text to chat endpoint
           print('📤 Sending to chat endpoint...');
           final chatResponse = await http.post(
-            Uri.parse('https://zenspace-production.up.railway.app/chat'),
+            Uri.parse('https://zenspace-production-external.up.railway.app/chat'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'user_input': _lastWords}),
           );
@@ -144,7 +144,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
           // Convert response to speech using selected voice type
           print('🔊 Converting to speech...');
           final ttsResponse = await http.post(
-            Uri.parse('https://zenspace-production.up.railway.app/${widget.voiceType}'),
+            Uri.parse('https://zenspace-production-external.up.railway.app/${widget.voiceType}'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'text': botMessage}),
           );
@@ -209,6 +209,12 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 360;
+    final isLargeScreen = screenWidth > 600;
+    final padding = MediaQuery.of(context).padding;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
@@ -225,116 +231,137 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                   border: Border.all(color: AppColors.cardBorder, width: 1),
                 ),
                 child: IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    print('Close button pressed');
+                    Navigator.pop(context);
+                  },
                   icon: Icon(Icons.close, color: AppColors.textPrimary),
                 ),
               ),
             ),
             // Main content
-            Column(
-              children: [
-                const SizedBox(height: 24),
-                // Companion info
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.cardBorder, width: 1),
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            widget.imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: screenHeight - padding.top - padding.bottom,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: isSmallScreen ? 16 : 24),
+                    // Companion info
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16 : 24),
+                      child: Row(
                         children: [
-                          Text(
-                            widget.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                          Container(
+                            width: isSmallScreen ? 40 : 48,
+                            height: isSmallScreen ? 40 : 48,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.cardBorder, width: 1),
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                widget.imagePath,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                          Text(
-                            widget.description,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
+                          SizedBox(width: isSmallScreen ? 8 : 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.name,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 16 : 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  widget.description,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 12 : 14,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: _isProcessing ? null : _toggleListening,
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: _isRecording 
-                                ? AppColors.error 
-                                : AppColors.primaryColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.cardBorder,
-                                width: 2,
+                    ),
+                    Container(
+                      height: screenHeight - padding.top - padding.bottom - (isSmallScreen ? 80 : 100),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: _isProcessing ? null : _toggleListening,
+                              child: Container(
+                                width: isSmallScreen ? 160 : (isLargeScreen ? 240 : 200),
+                                height: isSmallScreen ? 160 : (isLargeScreen ? 240 : 200),
+                                decoration: BoxDecoration(
+                                  color: _isRecording 
+                                    ? AppColors.error 
+                                    : AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.cardBorder,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Icon(
+                                  _isRecording ? Icons.stop : Icons.mic,
+                                  size: isSmallScreen ? 48 : (isLargeScreen ? 80 : 64),
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
                             ),
-                            child: Icon(
-                              _isRecording ? Icons.stop : Icons.mic,
-                              size: 64,
-                              color: AppColors.textPrimary,
+                            SizedBox(height: isSmallScreen ? 16 : 24),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16 : 24),
+                              child: Text(
+                                _statusText,
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 24 : (isLargeScreen ? 40 : 32),
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.2,
+                                  color: AppColors.textPrimary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 24),
-                        Text(
-                          _statusText,
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            height: 1.2,
-                            color: AppColors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
             if (_isProcessing)
-              Container(
-                color: AppColors.cardBorder.withOpacity(0.5),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      'Processing your message...',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+              Positioned.fill(
+                child: Container(
+                  color: AppColors.cardBorder.withOpacity(0.5),
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16 : 24),
+                      child: Text(
+                        'Processing your message...',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 16 : 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

@@ -28,6 +28,10 @@
 	<string>This app needs access to speech recognition to convert your voice input into text</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to microphone to record your voice input</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

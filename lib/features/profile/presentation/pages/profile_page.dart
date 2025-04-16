@@ -98,13 +98,6 @@ class ProfilePage extends StatelessWidget {
                         color: AppColors.cardBackground,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(color: AppColors.cardBorder, width: 1),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 4),
-                            blurRadius: 0,
-                          ),
-                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,13 +187,6 @@ class ProfilePage extends StatelessWidget {
                     color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.cardBorder, width: 1),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: Offset(0, 4),
-                        blurRadius: 0,
-                      ),
-                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,13 +267,6 @@ class ProfilePage extends StatelessWidget {
                               color: AppColors.backgroundColor,
                               borderRadius: BorderRadius.circular(24),
                               border: Border.all(color: AppColors.cardBorder, width: 1),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black,
-                                  offset: Offset(0, 4),
-                                  blurRadius: 0,
-                                ),
-                              ],
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -435,13 +414,6 @@ class ProfilePage extends StatelessWidget {
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black,
-            offset: Offset(0, 4),
-            blurRadius: 0,
-          ),
-        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -512,13 +484,6 @@ class ProfilePage extends StatelessWidget {
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.cardBorder, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black,
-            offset: Offset(0, 4),
-            blurRadius: 0,
-          ),
-        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

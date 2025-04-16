@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../features/main/presentation/pages/main_page.dart';
 import '../../features/journal/presentation/screens/journal_screen.dart';
 import '../../features/journal/presentation/screens/ai_journal_screen.dart';
+import '../../features/journal/data/models/journal_entry.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -40,8 +41,14 @@ class AppRouter {
             : _errorRoute('Empty journal can only be accessed from the journal tab');
             
       case '/journal/custom':
+        final args = settings.arguments as Map<String, dynamic>?;
         return isJournalTab
-            ? MaterialPageRoute(builder: (_) => const AIJournalScreen(mode: 'custom'))
+            ? MaterialPageRoute(
+                builder: (_) => AIJournalScreen(
+                  mode: 'custom',
+                  entry: args?['entry'] as JournalEntry?,
+                ),
+              )
             : _errorRoute('Custom journal can only be accessed from the journal tab');
             
       default:

@@ -7,6 +7,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:zenspace/features/chat/presentation/widgets/animated_blob.dart';
+import 'package:zenspace/core/theme/app_colors.dart';
 
 class ChatPage extends StatefulWidget {
   final String name;
@@ -84,7 +85,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       // Send message to chat endpoint
       final chatResponse = await http.post(
-        Uri.parse('https://zenspace-production.up.railway.app/chat'),
+        Uri.parse('https://zenspace-production-external.up.railway.app/chat'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_input': message}),
       );
@@ -146,7 +147,7 @@ class _ChatPageState extends State<ChatPage> {
           // Step 1: Convert voice to text using /talk endpoint
           final request = http.MultipartRequest(
             'POST',
-            Uri.parse('https://zenspace-production.up.railway.app/talk'),
+            Uri.parse('https://zenspace-production-external.up.railway.app/talk'),
           );
           request.files.add(await http.MultipartFile.fromPath('audio', path));
           final streamedResponse = await request.send();
@@ -164,7 +165,7 @@ class _ChatPageState extends State<ChatPage> {
 
             // Step 2: Send transcribed text to chat endpoint
             final chatResponse = await http.post(
-              Uri.parse('https://zenspace-production.up.railway.app/chat'),
+              Uri.parse('https://zenspace-production-external.up.railway.app/chat'),
               headers: {'Content-Type': 'application/json'},
               body: jsonEncode({'user_input': transcription}),
             );
@@ -226,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _convertTextToSpeech(String text) async {
     try {
       final ttsResponse = await http.post(
-        Uri.parse('https://zenspace-production.up.railway.app/${widget.voiceType}'),
+        Uri.parse('https://zenspace-production-external.up.railway.app/${widget.voiceType}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'text': text}),
       );
@@ -252,15 +253,15 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBackground,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.black, width: 1),
+              border: Border.all(color: AppColors.cardBorder, width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 LoadingAnimationWidget.waveDots(
-                  color: const Color(0xFFFFC727),
+                  color: AppColors.textSecondary,
                   size: 24,
                 ),
               ],
@@ -276,7 +277,7 @@ class _ChatPageState extends State<ChatPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: AppColors.backgroundColor,
         body: Column(
           children: [
             // Chat header
@@ -287,11 +288,11 @@ class _ChatPageState extends State<ChatPage> {
                 right: 16,
                 bottom: 16,
               ),
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFC727),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceColor,
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.black,
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                 ),
@@ -302,9 +303,9 @@ class _ChatPageState extends State<ChatPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     padding: const EdgeInsets.all(4),
                     child: Image.asset(
@@ -319,16 +320,17 @@ class _ChatPageState extends State<ChatPage> {
                     children: [
                       Text(
                         widget.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
                         widget.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: Colors.black54,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -336,16 +338,15 @@ class _ChatPageState extends State<ChatPage> {
                   const Spacer(),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black, width: 1),
+                      border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
                     child: IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.close),
-                      color: Colors.black,
+                      icon: Icon(Icons.close, color: AppColors.textPrimary),
                     ),
                   ),
                 ],
@@ -376,9 +377,9 @@ class _ChatPageState extends State<ChatPage> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: isUser ? const Color(0xFFFFC727) : Colors.white,
+                          color: isUser ? AppColors.surfaceColor : AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.black, width: 1),
+                          border: Border.all(color: AppColors.cardBorder, width: 1),
                         ),
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.75,
@@ -387,15 +388,15 @@ class _ChatPageState extends State<ChatPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isVoice && isUser) ...[
-                              const Icon(Icons.mic, size: 16, color: Colors.black54),
+                              Icon(Icons.mic, size: 16, color: AppColors.textSecondary),
                               const SizedBox(width: 8),
                             ],
                             Flexible(
                               child: Text(
                                 message['text'] as String,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black87,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ),
@@ -410,9 +411,9 @@ class _ChatPageState extends State<ChatPage> {
             // Input area
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: Colors.black12, width: 1),
+                  top: BorderSide(color: AppColors.cardBorder, width: 1),
                 ),
               ),
               child: Row(
@@ -421,27 +422,31 @@ class _ChatPageState extends State<ChatPage> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBackground,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.black12),
+                        border: Border.all(color: AppColors.cardBorder),
                       ),
                       child: TextField(
                         controller: _messageController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Type your message...',
                           hintStyle: TextStyle(
-                            color: Colors.black38,
+                            color: AppColors.textSecondary,
                             fontSize: 16,
                           ),
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
                           ),
                           border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
                         ),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                         minLines: 1,
                         maxLines: 5,
@@ -453,15 +458,15 @@ class _ChatPageState extends State<ChatPage> {
                   if (!_isTextOnly)
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBackground,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.black12),
+                        border: Border.all(color: AppColors.cardBorder),
                       ),
                       child: IconButton(
                         onPressed: _toggleRecording,
                         icon: Icon(
                           _isRecording ? Icons.stop : Icons.mic,
-                          color: _isRecording ? Colors.red : Colors.black54,
+                          color: _isRecording ? AppColors.error : AppColors.textSecondary,
                           size: 20,
                         ),
                         padding: EdgeInsets.zero,
@@ -474,15 +479,15 @@ class _ChatPageState extends State<ChatPage> {
                   const SizedBox(width: 8),
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFC727),
+                      color: AppColors.surfaceColor,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.black12),
+                      border: Border.all(color: AppColors.cardBorder),
                     ),
                     child: IconButton(
                       onPressed: () => _handleTextMessage(_messageController.text),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.send,
-                        color: Colors.black87,
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                       padding: EdgeInsets.zero,

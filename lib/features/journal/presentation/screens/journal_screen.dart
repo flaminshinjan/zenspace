@@ -118,6 +118,7 @@ class _JournalScreenState extends State<JournalScreen> {
                       arguments: {
                         'entry': entry,
                         'mode': 'custom',
+                        'isExisting': true,
                       },
                     ).then((_) => _loadJournalEntries());
                   },
