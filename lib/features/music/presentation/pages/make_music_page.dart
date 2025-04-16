@@ -73,7 +73,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
     try {
       print('🎵 Generating music with prompt: $prompt');
       final response = await http.post(
-        Uri.parse('https://zenspace-production.up.railway.app/generate-music'),
+        Uri.parse('https://zenspace-production-external.up.railway.app/generate-music'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'inputs': prompt}),
       );
@@ -154,13 +154,6 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                       color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.cardBorder, width: 1),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 2),
-                          blurRadius: 0,
-                        ),
-                      ],
                     ),
                     child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
                   ),
@@ -194,13 +187,6 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                     color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.cardBorder, width: 1),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black,
-                        offset: Offset(0, 4),
-                        blurRadius: 0,
-                      ),
-                    ],
                   ),
                   child: Column(
                     children: [
@@ -310,13 +296,6 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                       color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(color: AppColors.cardBorder, width: 1),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 4),
-                          blurRadius: 0,
-                        ),
-                      ],
                     ),
                     child: Column(
                       children: [

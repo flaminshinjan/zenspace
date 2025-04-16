@@ -25,7 +25,7 @@ class _AIJournalScreenState extends State<AIJournalScreen> {
   final TextEditingController _titleController = TextEditingController();
   final List<Map<String, String>> _conversation = [];
   bool _isLoading = false;
-  bool _showMoodSelection = true;
+  late bool _showMoodSelection;
   String? _selectedMood;
   int? _selectedMoodValue;
   late final GenerativeModel _model;
@@ -52,28 +52,49 @@ class _AIJournalScreenState extends State<AIJournalScreen> {
     );
     _chat = _model.startChat();
     _journalRepository = JournalRepository(Supabase.instance.client);
+    
+    // Initialize with a default value
+    _showMoodSelection = true;
 
     // If we have an existing entry, load its data
     if (widget.entry != null) {
       _conversation.addAll(widget.entry!.conversation);
       _selectedMood = widget.entry!.mood;
       _selectedMoodValue = widget.entry!.moodValue;
-      _showMoodSelection = false;
       _currentEntryId = widget.entry!.id;
       
-      // If there's an existing conversation, don't show mood selection or get initial prompt
-      if (_conversation.isNotEmpty) {
-        _showMoodSelection = false;
+      // Initialize chat history with existing conversation
+      for (final message in widget.entry!.conversation) {
+        if (message['role'] == 'user') {
+          _chat.sendMessage(Content.text(message['content']!));
+        }
       }
+      _showMoodSelection = false;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // Get the isExisting flag from the route arguments
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final isExisting = args?['isExisting'] ?? false;
+
+    // Update _showMoodSelection based on both widget.entry and isExisting flag
+    if (mounted) {
+      setState(() {
+        _showMoodSelection = !(widget.entry != null || isExisting);
+      });
     }
   }
 
   void _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
 
-    // If we're viewing an existing entry, don't send new messages
-    if (widget.entry != null && _conversation.isEmpty) {
-      return;
+    // If we're viewing an existing entry, don't show mood selection
+    if (widget.entry != null) {
+      _showMoodSelection = false;
     }
 
     final scrollController = PrimaryScrollController.of(context);
@@ -176,6 +197,9 @@ class _AIJournalScreenState extends State<AIJournalScreen> {
   }
 
   void _selectMood(String mood, int value) {
+    // Don't allow mood selection for existing entries
+    if (widget.entry != null) return;
+    
     if (_conversation.isNotEmpty) return; // Prevent multiple initial prompts
     
     setState(() {
@@ -187,6 +211,9 @@ class _AIJournalScreenState extends State<AIJournalScreen> {
   }
 
   Future<void> _getInitialPrompt() async {
+    // Don't get initial prompt for existing entries
+    if (widget.entry != null) return;
+    
     if (_conversation.isNotEmpty) return; // Prevent duplicate prompts
     
     setState(() => _isLoading = true);
@@ -453,6 +480,9 @@ Keep responses under 50 words. No greetings or explanations.''';
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final date = DateFormat('EEEE, MMMM d, y').format(now);
+
+    // Override mood selection visibility for existing entries
+    final shouldShowMoodSelection = widget.entry == null && _showMoodSelection;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -725,7 +755,7 @@ Keep responses under 50 words. No greetings or explanations.''';
               ],
             ),
           ),
-          if (_showMoodSelection)
+          if (shouldShowMoodSelection)
             Positioned.fill(
               child: Container(
                 color: Colors.black,

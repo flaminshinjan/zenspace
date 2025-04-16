@@ -1,13 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
 
-class TherapistsPage extends StatelessWidget {
+class TherapistsPage extends StatefulWidget {
   const TherapistsPage({super.key});
+
+  @override
+  State<TherapistsPage> createState() => _TherapistsPageState();
+}
+
+class _TherapistsPageState extends State<TherapistsPage> {
+  void _showComingSoonDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1D1D1D),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4ECDC4).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFF4ECDC4), width: 2),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.hourglass_empty,
+                    color: Color(0xFF4ECDC4),
+                    size: 40,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Coming Soon',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'The appointment booking feature will be available soon. Stay tuned!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4ECDC4),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Got it',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: const Color(0xFF121212),
       body: Column(
         children: [
           // Header
@@ -19,10 +103,10 @@ class TherapistsPage extends StatelessWidget {
               bottom: 16,
             ),
             decoration: BoxDecoration(
-              color: AppColors.primaryColor,
+              color: const Color(0xFF1D1D1D),
               border: Border(
                 bottom: BorderSide(
-                  color: AppColors.cardBorder,
+                  color: Colors.white.withOpacity(0.1),
                   width: 1,
                 ),
               ),
@@ -31,14 +115,13 @@ class TherapistsPage extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.cardBorder, width: 1),
+                    color: const Color(0xFF2A2A2A),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back),
-                    color: AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -47,7 +130,7 @@ class TherapistsPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -58,15 +141,16 @@ class TherapistsPage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.cardBorder, width: 1),
+                color: const Color(0xFF1D1D1D),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
               ),
               child: TextField(
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Search therapists...',
-                  hintStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                  prefixIcon: Icon(Icons.search, color: Colors.white.withOpacity(0.5)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
@@ -102,7 +186,7 @@ class TherapistsPage extends StatelessWidget {
                   reviews: 128,
                   distance: '1.2 km away',
                   availability: 'Available today',
-                  image: 'assets/images/therapist1.jpg',
+                  image: 'assets/images/rocky.png',
                   isOnline: true,
                 ),
                 const SizedBox(height: 16),
@@ -112,8 +196,8 @@ class TherapistsPage extends StatelessWidget {
                   rating: 4.9,
                   reviews: 89,
                   distance: '2.5 km away',
-                  availability: 'Next available: Tomorrow',
-                  image: 'assets/images/therapist2.jpg',
+                  availability: 'Available tomorrow',
+                  image: 'assets/images/max.png',
                   isOnline: false,
                 ),
                 const SizedBox(height: 16),
@@ -124,7 +208,7 @@ class TherapistsPage extends StatelessWidget {
                   reviews: 156,
                   distance: '3.0 km away',
                   availability: 'Available today',
-                  image: 'assets/images/therapist3.jpg',
+                  image: 'assets/images/bella.png',
                   isOnline: true,
                 ),
               ],
@@ -138,9 +222,9 @@ class TherapistsPage extends StatelessWidget {
   Widget _buildFilterChip(String label, bool isSelected) {
     return Container(
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.primaryColor : Colors.white,
+        color: isSelected ? const Color(0xFF4ECDC4) : const Color(0xFF1D1D1D),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardBorder, width: 1),
+        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -149,13 +233,13 @@ class TherapistsPage extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
           if (isSelected) ...[
             const SizedBox(width: 4),
-            Icon(Icons.check, size: 16, color: AppColors.textPrimary),
+            const Icon(Icons.check, size: 16, color: Colors.white),
           ],
         ],
       ),
@@ -174,16 +258,9 @@ class TherapistsPage extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1D1D1D),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.cardBorder.withOpacity(0.1),
-            offset: const Offset(0, 4),
-            blurRadius: 8,
-          ),
-        ],
+        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
       ),
       child: Column(
         children: [
@@ -191,7 +268,7 @@ class TherapistsPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: const Color(0xFF2A2A2A),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
             ),
             child: Row(
@@ -203,7 +280,7 @@ class TherapistsPage extends StatelessWidget {
                       height: 80,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        border: Border.all(color: AppColors.cardBorder, width: 1),
+                        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
                         image: DecorationImage(
                           image: AssetImage(image),
                           fit: BoxFit.cover,
@@ -233,10 +310,10 @@ class TherapistsPage extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -244,20 +321,20 @@ class TherapistsPage extends StatelessWidget {
                         specialty,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColors.textSecondary,
+                          color: Colors.white.withOpacity(0.6),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(Icons.star, size: 16, color: AppColors.primaryColor),
+                          const Icon(Icons.star, size: 16, color: Color(0xFF4ECDC4)),
                           const SizedBox(width: 4),
                           Text(
                             rating.toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(width: 4),
@@ -265,7 +342,7 @@ class TherapistsPage extends StatelessWidget {
                             '($reviews reviews)',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textSecondary,
+                              color: Colors.white.withOpacity(0.6),
                             ),
                           ),
                         ],
@@ -283,23 +360,26 @@ class TherapistsPage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined, size: 16, color: AppColors.textSecondary),
+                    Icon(Icons.location_on_outlined, size: 16, color: Colors.white.withOpacity(0.6)),
                     const SizedBox(width: 4),
                     Text(
                       distance,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: Colors.white.withOpacity(0.6),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                    Icon(Icons.access_time, size: 16, color: Colors.white.withOpacity(0.6)),
                     const SizedBox(width: 4),
-                    Text(
-                      availability,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
+                    Flexible(
+                      child: Text(
+                        availability,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.6),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -309,14 +389,13 @@ class TherapistsPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => _showComingSoonDialog(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                          foregroundColor: AppColors.textPrimary,
+                          backgroundColor: const Color(0xFF4ECDC4),
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: AppColors.cardBorder, width: 1),
                           ),
                         ),
                         child: const Text('Book Appointment'),
@@ -325,14 +404,14 @@ class TherapistsPage extends StatelessWidget {
                     const SizedBox(width: 12),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFF2A2A2A),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColors.cardBorder, width: 1),
+                        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
                       ),
                       child: IconButton(
                         onPressed: () {},
                         icon: const Icon(Icons.message_outlined),
-                        color: AppColors.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                   ],

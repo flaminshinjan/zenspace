@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
@@ -23,14 +24,13 @@ class _MainPageState extends State<MainPage> with RouteAware {
     const DashboardPage(),
     const TalkWithAIPage(),
     const JournalScreen(),
-    const MakeMusicPage(),
+   
     const ProfilePage(),
   ];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Check for initial tab selection from route arguments
     final settings = ModalRoute.of(context)?.settings;
     if (settings?.arguments != null) {
       final args = settings!.arguments as Map<String, dynamic>;
@@ -46,15 +46,12 @@ class _MainPageState extends State<MainPage> with RouteAware {
   Widget build(BuildContext context) {
     return Navigator(
       onGenerateRoute: (settings) {
-        // Handle journal routes
         if (settings.name?.startsWith('/journal/') == true) {
           return AppRoutes.onGenerateRoute(settings);
         }
-        
-        // Default page (main tab view)
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            backgroundColor: const Color(0xFFF3F5DE),
+            backgroundColor: const Color(0xFF161B1E),
             body: Stack(
               children: [
                 // Page content
@@ -68,33 +65,26 @@ class _MainPageState extends State<MainPage> with RouteAware {
                   left: 16,
                   right: 16,
                   bottom: 25,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFAE6),
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 3,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 8),
-                          spreadRadius: 0,
-                          blurRadius: 0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(40),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF121212).withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(40),
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildNavItem(0, AssetConstants.dogHouse),
-                        _buildNavItem(1, AssetConstants.runningDog),
-                        _buildNavItem(2, AssetConstants.happyDog),
-                        _buildNavItem(3, AssetConstants.meditatingDog),
-                        _buildNavItem(4, AssetConstants.happyDog),
-                      ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildNavItem(0, AssetConstants.dogHouse),
+                            _buildNavItem(1, AssetConstants.runningDog),
+                            _buildNavItem(2, AssetConstants.happyDog),
+                            _buildNavItem(3, AssetConstants.meditatingDog),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -127,9 +117,9 @@ class _MainPageState extends State<MainPage> with RouteAware {
             ),
             const SizedBox(height: 4),
             Container(
-              width: 24,
+              width: 30,
               height: 3,
-              color: _currentIndex == index ? const Color(0xFFF7CC57) : Colors.transparent,
+              color: _currentIndex == index ? const Color(0xFF6D737C) : Colors.transparent,
             ),
           ],
         ),

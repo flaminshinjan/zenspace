@@ -17,9 +17,10 @@ class _TalkToPawpalWidgetState extends State<TalkToPawpalWidget> {
 
   // Color constants
   static const Color primaryYellow = Color(0xFFFFC107);
-  static const Color lightYellow = Color(0xFFFFF3D0);
-  static const Color textDark = Color(0xFF2C2C2C);
-  static const Color textLight = Color(0xFF757575);
+  static const Color darkBackground = Color(0xFF1A1A1A);
+  static const Color darkSurface = Color(0xFF2C2C2C);
+  static const Color textLight = Color(0xFFE0E0E0);
+  static const Color textDark = Color(0xFFBDBDBD);
 
   @override
   void dispose() {
@@ -115,63 +116,56 @@ Your job is to:
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: _isExpanded
           ? Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: lightYellow,
+                color: darkSurface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 1),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(0, 4),
-                    blurRadius: 0,
-                  ),
-                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _phoneController,
-                          keyboardType: TextInputType.phone,
-                          style: TextStyle(color: textDark),
-                          decoration: InputDecoration(
-                            hintText: 'Enter your phone number',
-                            hintStyle: TextStyle(color: textLight),
-                            border: InputBorder.none,
-                          ),
-                        ),
+                  Expanded(
+                    child: TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      style: const TextStyle(
+                        color: textLight,
+                        fontSize: 16,
                       ),
-                      IconButton(
-                        onPressed: _isLoading ? null : _initiateCall,
-                        icon: _isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(primaryYellow),
-                                ),
-                              )
-                            : Icon(Icons.phone, color: primaryYellow),
-                      ),
-                    ],
-                  ),
-                  if (_errorMessage != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        _errorMessage!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter your phone number',
+                        hintStyle: TextStyle(
+                          color: textLight,
+                          fontSize: 16,
                         ),
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        fillColor: Colors.transparent,
+                        filled: true,
                       ),
                     ),
+                  ),
+                  _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(primaryYellow),
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: _initiateCall,
+                          icon: const Icon(
+                            Icons.phone,
+                            color: primaryYellow,
+                            size: 24,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
                 ],
               ),
             )
@@ -184,29 +178,25 @@ Your job is to:
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
-                  color: lightYellow,
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: Colors.black, width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                    ),
-                  ],
+                  color: darkSurface,
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'talk with your zenbuddy today',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: textDark,
+                    Expanded(
+                      child: Text(
+                        'Enter your phone number',
+                        style: TextStyle(
+                          color: textLight,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                    Icon(Icons.phone, size: 20, color: textDark),
+                    const Icon(
+                      Icons.phone,
+                      color: primaryYellow,
+                      size: 24,
+                    ),
                   ],
                 ),
               ),
