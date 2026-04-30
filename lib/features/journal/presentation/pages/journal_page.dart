@@ -57,7 +57,7 @@ class _JournalPageState extends State<JournalPage> {
                               ),
                             ],
                           ),
-                          child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+                          child: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -65,7 +65,7 @@ class _JournalPageState extends State<JournalPage> {
                       // Date text
                       Text(
                         _getFormattedDate(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.textSecondary,
                         ),
@@ -76,7 +76,7 @@ class _JournalPageState extends State<JournalPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Today's Thoughts",
                             style: TextStyle(
                               fontSize: 32,
@@ -112,12 +112,12 @@ class _JournalPageState extends State<JournalPage> {
                           controller: _journalController,
                           focusNode: _focusNode,
                           maxLines: null,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             height: 1.5,
                             color: AppColors.textPrimary,
                           ),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Write your thoughts...',
                             hintStyle: TextStyle(
@@ -151,27 +151,27 @@ class _JournalPageState extends State<JournalPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.text_fields, color: AppColors.textPrimary),
+                    icon: const Icon(Icons.text_fields, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Text style',
                   ),
                   IconButton(
-                    icon: Icon(Icons.image_outlined, color: AppColors.textPrimary),
+                    icon: const Icon(Icons.image_outlined, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Add image',
                   ),
                   IconButton(
-                    icon: Icon(Icons.mic_none_rounded, color: AppColors.textPrimary),
+                    icon: const Icon(Icons.mic_none_rounded, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Voice input',
                   ),
                   IconButton(
-                    icon: Icon(Icons.edit_outlined, color: AppColors.textPrimary),
+                    icon: const Icon(Icons.edit_outlined, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'Draw',
                   ),
                   IconButton(
-                    icon: Icon(Icons.more_horiz, color: AppColors.textPrimary),
+                    icon: const Icon(Icons.more_horiz, color: AppColors.textPrimary),
                     onPressed: () {},
                     tooltip: 'More options',
                   ),

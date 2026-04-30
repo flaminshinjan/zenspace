@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../models/journal_entry.dart';
-import '../../services/journal_service.dart';
-import 'mental_exercises_page.dart';
-import '../../../../core/routes/slide_up_route.dart';
+import 'package:intl/intl.dart';
+import '../../data/models/journal_entry.dart';
+import '../../data/repositories/journal_repository.dart';
 
 class JournalDetailPage extends StatefulWidget {
-  final JournalEntry entry;
-  final JournalService journalService;
+  final String entryId;
+  final JournalRepository journalRepository;
 
   const JournalDetailPage({
     Key? key,
-    required this.entry,
-    required this.journalService,
+    required this.entryId,
+    required this.journalRepository,
   }) : super(key: key);
 
   @override
@@ -20,418 +19,417 @@ class JournalDetailPage extends StatefulWidget {
 }
 
 class _JournalDetailPageState extends State<JournalDetailPage> {
-  late TextEditingController _contentController;
-  late String _selectedMood;
-  bool _isEditing = false;
-  bool _isSaving = false;
-
-  final List<Map<String, dynamic>> _moods = [
-    {'name': 'Happy', 'emoji': '😊', 'color': Colors.green},
-    {'name': 'Calm', 'emoji': '😌', 'color': Colors.purple},
-    {'name': 'Sad', 'emoji': '😢', 'color': Colors.blue},
-    {'name': 'Anxious', 'emoji': '😰', 'color': Colors.orange},
-    {'name': 'Angry', 'emoji': '😠', 'color': Colors.red},
-  ];
+  bool _isLoading = true;
+  bool _showConversation = false;
+  JournalEntry? _entry;
 
   @override
   void initState() {
     super.initState();
-    _contentController = TextEditingController(text: widget.entry.content);
-    _selectedMood = widget.entry.mood;
+    _loadEntryDetails();
   }
 
-  @override
-  void dispose() {
-    _contentController.dispose();
-    super.dispose();
-  }
-
-  Color _getMoodColor(String mood) {
-    final moodData = _moods.firstWhere(
-      (m) => m['name'].toLowerCase() == mood.toLowerCase(),
-      orElse: () => _moods[0],
-    );
-    return moodData['color'] as Color;
-  }
-
-  String _getMoodEmoji(String mood) {
-    final moodData = _moods.firstWhere(
-      (m) => m['name'].toLowerCase() == mood.toLowerCase(),
-      orElse: () => _moods[0],
-    );
-    return moodData['emoji'] as String;
-  }
-
-  Future<void> _saveChanges() async {
-    setState(() => _isSaving = true);
-
+  Future<void> _loadEntryDetails() async {
     try {
-      await widget.journalService.updateJournalEntry(
-        id: widget.entry.id,
-        content: _contentController.text,
-        mood: _selectedMood,
-      );
-
+      print('🔄 Fetching journal entry details: ${widget.entryId}');
+      final entry = await widget.journalRepository.getJournalEntry(widget.entryId);
+      
       if (mounted) {
-        Navigator.pop(context, true);
+        setState(() {
+          _entry = entry;
+          _isLoading = false;
+        });
+        
+        print('✅ Entry loaded with ${entry.conversation.length} conversation messages');
       }
     } catch (e) {
+      print('❌ Error loading entry: $e');
       if (mounted) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Error updating journal entry: $e',
-              style: GoogleFonts.poppins(),
-            ),
+            content: Text('Error loading entry: $e'),
+            backgroundColor: Colors.red,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
       }
     }
   }
 
-  Future<void> _deleteEntry() async {
-    final shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Delete Entry',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to delete this journal entry?',
-          style: GoogleFonts.poppins(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.poppins(),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              'Delete',
-              style: GoogleFonts.poppins(
-                color: Colors.red,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  int _getActualMessageCount() {
+    if (_entry == null || _entry!.conversation.isEmpty) return 0;
+    
+    // Filter out initial system prompt
+    int count = _entry!.conversation.length;
+    final firstMessage = _entry!.conversation[0];
+    final firstContent = firstMessage['content'] ?? '';
+    
+    if (firstContent.contains('My mood is') && 
+        (firstContent.contains('Please provide') || 
+         firstContent.contains('Help me'))) {
+      count--;
+    }
+    
+    return count;
+  }
 
-    if (shouldDelete != true) return;
-
-    setState(() => _isSaving = true);
-
-    try {
-      await widget.journalService.deleteJournalEntry(widget.entry.id);
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error deleting journal entry: $e',
-              style: GoogleFonts.poppins(),
-            ),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
+  String _getMoodEmoji(String mood) {
+    switch (mood.toLowerCase()) {
+      case 'happy':
+      case 'excited':
+      case 'very happy':
+        return '😊';
+      case 'calm':
+      case 'peaceful':
+        return '😌';
+      case 'sad':
+      case 'very sad':
+        return '😢';
+      case 'anxious':
+      case 'worried':
+        return '😰';
+      case 'angry':
+        return '😠';
+      case 'neutral':
+        return '😐';
+      default:
+        return '😊';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final moodColor = _getMoodColor(_selectedMood);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F5DE),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF3F5DE),
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFFAE6),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white.withOpacity(0.9),
           ),
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          _isEditing ? 'Edit Journal Entry' : 'Journal Entry',
+          'Journal Entry',
           style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white.withOpacity(0.9),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          if (_isSaving)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else if (_isEditing)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.check, color: Colors.black),
-                  onPressed: _saveChanges,
-                ),
-              ),
-            )
-          else ...[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.black),
-                  onPressed: () => setState(() => _isEditing = true),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black),
-                  onPressed: _deleteEntry,
-                ),
-              ),
-            ),
-          ],
-        ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 16,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFAE6),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black, width: 2),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Text(
-                      _getMoodEmoji(_selectedMood),
-                      style: const TextStyle(fontSize: 24),
+            )
+          : _entry == null
+              ? Center(
+                  child: Text(
+                    'Entry not found',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white70,
+                      fontSize: 16,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Mood',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.black.withOpacity(0.6),
-                          ),
-                        ),
-                        if (_isEditing) ...[
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: _moods.map((mood) {
-                              final isSelected = _selectedMood == mood['name'].toLowerCase();
-                              return Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: isSelected ? 2 : 1,
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header with date and mood
+                      Row(
+                        children: [
+                          // Date
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  size: 14,
+                                  color: Colors.white.withOpacity(0.7),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  DateFormat('MMM d, yyyy').format(_entry!.createdAt),
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                child: ChoiceChip(
-                                  label: Text(
-                                    mood['emoji'],
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  selected: isSelected,
-                                  onSelected: (selected) {
-                                    if (selected) {
-                                      setState(() {
-                                        _selectedMood = mood['name'].toLowerCase();
-                                      });
-                                    }
-                                  },
-                                  backgroundColor: Colors.white,
-                                  selectedColor: const Color(0xFFFFFAE6),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ] else
-                          Text(
-                            _selectedMood.toUpperCase(),
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              ],
                             ),
                           ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Journal Entry',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_isEditing)
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: TextFormField(
-                  controller: _contentController,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: 'Write your thoughts here...',
-                    hintStyle: GoogleFonts.poppins(
-                      color: Colors.black.withOpacity(0.4),
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    height: 1.5,
-                    color: Colors.black,
-                  ),
-                ),
-              )
-            else
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFAE6),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: Text(
-                  widget.entry.content,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    height: 1.5,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFAE6),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black, width: 2),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      SlideUpRoute(
-                        page: MentalExercisesPage(
-                          mood: _selectedMood,
+                          const Spacer(),
+                          // Mood
+                          if (_entry!.mood != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _getMoodEmoji(_entry!.mood!),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    _entry!.mood!.toUpperCase(),
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Title
+                      Text(
+                        _entry!.title,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
                         ),
                       ),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.self_improvement, color: Colors.black),
-                        const SizedBox(width: 8),
-                        Text(
-                          'View Mental Exercises',
+                      const SizedBox(height: 16),
+
+                      // Content
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                        ),
+                        child: Text(
+                          _entry!.content,
                           style: GoogleFonts.poppins(
+                            color: Colors.white.withOpacity(0.85),
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Conversation Section
+                      if (_entry!.conversation.isNotEmpty) ...[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.1),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _showConversation = !_showConversation;
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.purple.withOpacity(0.6),
+                                                Colors.blue.withOpacity(0.6),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Icon(
+                                            Icons.chat_bubble,
+                                            color: Colors.white.withOpacity(0.9),
+                                            size: 20,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'AI Conversation',
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white.withOpacity(0.9),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                               Text(
+                                                 '${_getActualMessageCount()} messages',
+                                                 style: GoogleFonts.poppins(
+                                                   color: Colors.white.withOpacity(0.5),
+                                                   fontSize: 12,
+                                                 ),
+                                               ),
+                                            ],
+                                          ),
+                                        ),
+                                        Icon(
+                                          _showConversation
+                                              ? Icons.expand_less
+                                              : Icons.expand_more,
+                                          color: Colors.white.withOpacity(0.7),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (_showConversation) ...[
+                                Divider(
+                                  height: 1,
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                                Container(
+                                  constraints: const BoxConstraints(maxHeight: 400),
+                                   child: ListView.builder(
+                                     shrinkWrap: true,
+                                     padding: const EdgeInsets.all(16),
+                                     itemCount: _entry!.conversation.length,
+                                     itemBuilder: (context, index) {
+                                       final message = _entry!.conversation[index];
+                                       final role = message['role']?.toLowerCase() ?? '';
+                                       final isUser = role == 'user';
+                                       final content = message['content'] ?? '';
+                                       
+                                       // Skip empty messages
+                                       if (content.isEmpty) return const SizedBox.shrink();
+                                       
+                                       // Skip initial system prompt (first message with mood)
+                                       if (index == 0 && content.contains('My mood is') && 
+                                           (content.contains('Please provide') || 
+                                            content.contains('Help me'))) {
+                                         return const SizedBox.shrink();
+                                       }
+                                       
+                                       return Padding(
+                                         padding: const EdgeInsets.only(bottom: 12),
+                                         child: _buildChatBubble(content, isUser),
+                                       );
+                                     },
+                                   ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
+    );
+  }
+
+  Widget _buildChatBubble(String content, bool isUser) {
+    return Row(
+      mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!isUser) ...[
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple.withOpacity(0.3),
+                  Colors.blue.withOpacity(0.3),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.smart_toy,
+              size: 16,
+              color: Colors.white.withOpacity(0.9),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isUser
+                  ? Colors.blue.withOpacity(0.2)
+                  : Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isUser
+                    ? Colors.blue.withOpacity(0.3)
+                    : Colors.white.withOpacity(0.1),
               ),
             ),
-          ],
+            child: Text(
+              content,
+              style: GoogleFonts.poppins(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+          ),
         ),
-      ),
+        if (isUser) ...[
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.3),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person,
+              size: 16,
+              color: Colors.white.withOpacity(0.9),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
+

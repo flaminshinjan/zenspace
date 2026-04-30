@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/routes/slide_up_route.dart';
-import '../../models/journal_entry.dart';
-import '../../services/journal_service.dart';
+import '../../data/repositories/journal_repository.dart';
 import 'mental_exercises_page.dart';
 
 class CreateJournalPage extends StatefulWidget {
-  final JournalService journalService;
+  final JournalRepository journalRepository;
 
   const CreateJournalPage({
     Key? key,
-    required this.journalService,
+    required this.journalRepository,
   }) : super(key: key);
 
   @override
@@ -43,9 +42,12 @@ class _CreateJournalPageState extends State<CreateJournalPage> {
     setState(() => _isLoading = true);
 
     try {
-      await widget.journalService.createJournalEntry(
+      await widget.journalRepository.createJournalEntry(
+        title: "Today's Thoughts",
         content: _contentController.text,
         mood: _selectedMood,
+        moodValue: _getMoodValue(_selectedMood),
+        conversation: [],
       );
 
       if (mounted) {
@@ -66,6 +68,23 @@ class _CreateJournalPageState extends State<CreateJournalPage> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  int _getMoodValue(String mood) {
+    switch (mood.toLowerCase()) {
+      case 'happy':
+        return 4;
+      case 'calm':
+        return 3;
+      case 'sad':
+        return 2;
+      case 'anxious':
+        return 2;
+      case 'angry':
+        return 1;
+      default:
+        return 3;
     }
   }
 

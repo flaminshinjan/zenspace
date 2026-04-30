@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
 import 'package:zenspace/features/auth/presentation/pages/login_page.dart';
-import 'package:zenspace/core/config/supabase_config.dart';
+import 'package:zenspace/core/services/auth_service.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   Future<void> _handleLogout(BuildContext context) async {
     try {
-      debugPrint('🔄 Signing out from Supabase...');
-      await SupabaseConfig.client.auth.signOut();
+      debugPrint('🔄 Signing out...');
+      
+      // Try API logout first
+      final authService = AuthService();
+      final response = await authService.logout();
+      
+      if (response.success) {
+        debugPrint('✅ API logout successful');
+      } else {
+        debugPrint('⚠️ API logout failed, but clearing local session');
+      }
+      // Tokens are always cleared by AuthService.logout()
       debugPrint('✅ Successfully signed out');
       
       if (context.mounted) {
@@ -22,8 +32,8 @@ class ProfilePage extends StatelessWidget {
       debugPrint('❌ Error during sign out: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Error signing out. Please try again.'),
+          const SnackBar(
+            content: Text('Error signing out. Please try again.'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -44,7 +54,7 @@ class ProfilePage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Header with greeting and profile picture
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -63,10 +73,10 @@ class ProfilePage extends StatelessWidget {
                                 color: AppColors.textPrimary,
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         Text(
                           'Insights',
                           style: TextStyle(
@@ -79,7 +89,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     CircleAvatar(
                       radius: 0,
-                      backgroundImage: const AssetImage('assets/images/profile_avatar.png'),
+                      backgroundImage: AssetImage('assets/images/profile_avatar.png'),
                     ),
                   ],
                 ),
@@ -99,7 +109,7 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(color: AppColors.cardBorder, width: 1),
                       ),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -129,17 +139,17 @@ class ProfilePage extends StatelessWidget {
                       width: 150,
                       child: Column(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 56,
                             child: _buildStreakCard('Longest\nDaily\nStreak', '3', 'Days'),
                           ),
                           const SizedBox(height: 8),
-                          Container(
+                          SizedBox(
                             height: 56,
                             child: _buildStreakCard('Longest\nWeekly\nStreak', '9', 'Weeks'),
                           ),
                           const SizedBox(height: 8),
-                          Container(
+                          SizedBox(
                             height: 56,
                             child: _buildStreakCard('Longest\nMoodar\nStreak', '15', 'Times'),
                           ),
@@ -154,7 +164,7 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Manage your subscriptions',
                       style: TextStyle(
                         fontSize: 17,
@@ -169,7 +179,7 @@ class ProfilePage extends StatelessWidget {
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: Text(
+                      child: const Text(
                         'See More',
                         style: TextStyle(
                           fontSize: 15,
@@ -188,7 +198,7 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.cardBorder, width: 1),
                   ),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
@@ -212,7 +222,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         'Monthly \$1.99/month',
                         style: TextStyle(
@@ -220,7 +230,7 @@ class ProfilePage extends StatelessWidget {
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         'Ideal to Discover your inner self and jot\ndown your life\'s everyday bits.',
                         style: TextStyle(
@@ -235,7 +245,7 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 28),
 
                 // Personalization section
-                Text(
+                const Text(
                   'Personalize your ai.journal',
                   style: TextStyle(
                     fontSize: 17,
@@ -274,18 +284,18 @@ class ProfilePage extends StatelessWidget {
                                 Container(
                                   width: 64,
                                   height: 64,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: AppColors.primaryColor,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.logout,
                                     color: AppColors.textPrimary,
                                     size: 32,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
-                                Text(
+                                const Text(
                                   'Logout',
                                   style: TextStyle(
                                     fontSize: 24,
@@ -294,7 +304,7 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
+                                const Text(
                                   'Are you sure you want to logout?',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -315,7 +325,7 @@ class ProfilePage extends StatelessWidget {
                                             borderRadius: BorderRadius.circular(16),
                                             border: Border.all(color: AppColors.cardBorder.withOpacity(0.1)),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               'Cancel',
                                               style: TextStyle(
@@ -374,11 +384,11 @@ class ProfilePage extends StatelessWidget {
                           Container(
                             width: 20,
                             height: 20,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: AppColors.primaryColor,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.logout,
                               color: AppColors.cardBorder,
                               size: 14,
@@ -422,7 +432,7 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Longest',
                 style: TextStyle(
                   fontSize: 12,
@@ -432,14 +442,14 @@ class ProfilePage extends StatelessWidget {
               ),
               Text(
                 title.split('\n')[1],
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   height: 1,
                 ),
               ),
-              Text(
+              const Text(
                 'Streak',
                 style: TextStyle(
                   fontSize: 12,
@@ -455,7 +465,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -464,7 +474,7 @@ class ProfilePage extends StatelessWidget {
               ),
               Text(
                 unit,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.textSecondary,
                   height: 1,
@@ -490,7 +500,7 @@ class ProfilePage extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               color: AppColors.textSecondary,
             ),
@@ -499,13 +509,13 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
+              const Text(
                 'Edit',
                 style: TextStyle(
                   fontSize: 13,

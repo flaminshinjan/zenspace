@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
 import 'package:zenspace/core/routes/app_routes.dart';
 import 'package:zenspace/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:zenspace/features/chat/presentation/pages/talk_with_ai_page.dart';
-import 'package:zenspace/features/music/presentation/pages/make_music_page.dart';
 import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
 import 'package:zenspace/features/journal/presentation/screens/journal_screen.dart';
 

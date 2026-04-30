@@ -16,18 +16,18 @@ class OnboardingCompletePage extends StatelessWidget {
             Container(
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.cardBackground,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check,
                 size: 60,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 32),
-            Text(
+            const Text(
               'Onboarding Complete!',
               style: TextStyle(
                 fontSize: 24,
@@ -36,7 +36,7 @@ class OnboardingCompletePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'You\'re all set to start your ZenSpace journey',
               style: TextStyle(
                 fontSize: 16,
@@ -60,7 +60,7 @@ class OnboardingCompletePage extends StatelessWidget {
                   vertical: 16,
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Get Started',
                 style: TextStyle(
                   fontSize: 18,

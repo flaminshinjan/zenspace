@@ -12,7 +12,7 @@ class MeditationService {
 
   Future<List<MeditationSession>> getMeditationSessions() async {
     // This would typically come from a backend, but we'll generate it with Gemini
-    final prompt = '''
+    const prompt = '''
     Generate 8 meditation sessions in JSON format. Each session should have:
     - id (unique string)
     - title (string)

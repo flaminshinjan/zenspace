@@ -85,8 +85,8 @@ Your job is to:
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Call initiated! You will receive a call shortly.'),
+          const SnackBar(
+            content: Text('Call initiated! You will receive a call shortly.'),
             backgroundColor: primaryYellow,
           ),
         );
@@ -181,7 +181,7 @@ Your job is to:
                   color: darkSurface,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
                     Expanded(
                       child: Text(
@@ -192,7 +192,7 @@ Your job is to:
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.phone,
                       color: primaryYellow,
                       size: 24,

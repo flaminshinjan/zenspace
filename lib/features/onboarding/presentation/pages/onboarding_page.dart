@@ -12,8 +12,8 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   int _currentQuestionIndex = 0;
-  Map<String, List<String>> _selectedAnswers = {};
-  DateTime _currentDate = DateTime.now();
+  final Map<String, List<String>> _selectedAnswers = {};
+  final DateTime _currentDate = DateTime.now();
 
   final List<Map<String, dynamic>> _questions = [
     {

@@ -288,7 +288,7 @@ class _ChatPageState extends State<ChatPage> {
                 right: 16,
                 bottom: 16,
               ),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.surfaceColor,
                 border: Border(
                   bottom: BorderSide(
@@ -320,7 +320,7 @@ class _ChatPageState extends State<ChatPage> {
                     children: [
                       Text(
                         widget.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
@@ -328,7 +328,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       Text(
                         widget.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textSecondary,
                         ),
@@ -346,7 +346,7 @@ class _ChatPageState extends State<ChatPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.close, color: AppColors.textPrimary),
+                      icon: const Icon(Icons.close, color: AppColors.textPrimary),
                     ),
                   ),
                 ],
@@ -388,13 +388,13 @@ class _ChatPageState extends State<ChatPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isVoice && isUser) ...[
-                              Icon(Icons.mic, size: 16, color: AppColors.textSecondary),
+                              const Icon(Icons.mic, size: 16, color: AppColors.textSecondary),
                               const SizedBox(width: 8),
                             ],
                             Flexible(
                               child: Text(
                                 message['text'] as String,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.textPrimary,
                                 ),
@@ -411,7 +411,7 @@ class _ChatPageState extends State<ChatPage> {
             // Input area
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(color: AppColors.cardBorder, width: 1),
                 ),
@@ -428,13 +428,13 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       child: TextField(
                         controller: _messageController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Type your message...',
                           hintStyle: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 16,
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
+                          contentPadding: EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
                           ),
@@ -444,7 +444,7 @@ class _ChatPageState extends State<ChatPage> {
                           errorBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
                         ),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.textPrimary,
                         ),
@@ -485,7 +485,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     child: IconButton(
                       onPressed: () => _handleTextMessage(_messageController.text),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.send,
                         color: AppColors.textPrimary,
                         size: 20,

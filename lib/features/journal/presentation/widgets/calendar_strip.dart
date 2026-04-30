@@ -15,7 +15,7 @@ class CalendarStrip extends StatelessWidget {
       );
     });
 
-    return Container(
+    return SizedBox(
       height: 80,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

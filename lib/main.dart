@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zenspace/core/config/app_config.dart';
 import 'package:zenspace/core/config/flavor_config.dart';
 import 'package:zenspace/core/config/supabase_config.dart';
 import 'package:zenspace/core/theme/app_theme.dart';
 import 'package:zenspace/features/auth/presentation/pages/splash_page.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:zenspace/core/network/api_client.dart';
 
 // This will be set by the build system
 const String flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
   
   debugPrint('🏁 Starting app initialization...');
   
@@ -20,7 +22,15 @@ void main() async {
   FlavorConfig.initialize(currentFlavor);
   debugPrint('🎨 Flavor initialized: $currentFlavor');
   
-  // Initialize Supabase
+  // Initialize API Client
+  try {
+    await ApiClient().initialize();
+    debugPrint('🌐 API Client initialized!');
+  } catch (e) {
+    debugPrint('❌ Error initializing API Client: $e');
+  }
+  
+  // Initialize Supabase (keeping for backward compatibility)
   try {
     await SupabaseConfig.initialize();
     // Start listening to auth changes
@@ -61,8 +71,8 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.lightTheme,
       themeMode: ThemeMode.dark,
-      home: ScaffoldMessenger(
-        child: const SplashPage(),
+      home: const ScaffoldMessenger(
+        child: SplashPage(),
       ),
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,

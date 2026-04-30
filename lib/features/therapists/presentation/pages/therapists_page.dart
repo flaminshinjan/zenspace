@@ -125,7 +125,7 @@ class _TherapistsPageState extends State<TherapistsPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Text(
+                const Text(
                   'Therapists Near Me',
                   style: TextStyle(
                     fontSize: 20,
@@ -267,9 +267,9 @@ class _TherapistsPageState extends State<TherapistsPage> {
           // Image and basic info
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+            decoration: const BoxDecoration(
+              color: Color(0xFF2A2A2A),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
             ),
             child: Row(
               children: [

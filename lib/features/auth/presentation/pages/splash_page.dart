@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zenspace/features/auth/presentation/pages/intro_page.dart';
-import 'package:zenspace/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:zenspace/core/constants/asset_constants.dart';
 import 'package:zenspace/features/main/presentation/pages/main_page.dart';
+import 'package:zenspace/core/network/api_client.dart';
+import 'package:zenspace/core/services/auth_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -27,26 +27,45 @@ class _SplashPageState extends State<SplashPage> {
 
     try {
       debugPrint('🔍 Checking authentication status...');
-      final session = Supabase.instance.client.auth.currentSession;
+      
+      // Check if API token exists
+      final apiClient = ApiClient();
+      final hasToken = apiClient.accessToken != null;
+      
+      debugPrint('👤 Token status: ${hasToken ? 'Token found' : 'No token'}');
+      debugPrint('🔑 Access token: ${apiClient.accessToken?.substring(0, 20) ?? 'null'}...');
       
       // Add a small delay for splash screen visibility
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
 
-      debugPrint('👤 Session status: ${session != null ? 'Authenticated' : 'Not authenticated'}');
-      debugPrint('📧 User email: ${session?.user.email}');
+      if (hasToken) {
+        // Verify token is still valid by checking user data
+        final authService = AuthService();
+        final userEmail = await authService.getCurrentUserEmail();
+        final userId = await authService.getCurrentUserId();
+        
+        debugPrint('📧 User email: $userEmail');
+        debugPrint('🆔 User ID: $userId');
 
-      if (session?.user != null) {
-        debugPrint('➡️ Navigating to MainPage');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MainPage()),
-        );
+        if (userEmail != null && userId != null) {
+          debugPrint('✅ Valid session found');
+          debugPrint('➡️ Navigating to MainPage');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainPage()),
+          );
+          return;
+        } else {
+          debugPrint('⚠️ Token exists but user data missing');
+        }
       } else {
-        debugPrint('➡️ Navigating to IntroPage');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const IntroPage()),
-        );
+        debugPrint('❌ No authentication token found');
       }
+      
+      debugPrint('➡️ Navigating to IntroPage');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const IntroPage()),
+      );
     } catch (e) {
       debugPrint('❌ Error during auth check: $e');
       if (!mounted) return;
@@ -61,7 +80,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff161B1E),
+      backgroundColor: const Color(0xff161B1E),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

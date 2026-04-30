@@ -235,7 +235,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                     print('Close button pressed');
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.close, color: AppColors.textPrimary),
+                  icon: const Icon(Icons.close, color: AppColors.textPrimary),
                 ),
               ),
             ),
@@ -296,7 +296,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                         ],
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: screenHeight - padding.top - padding.bottom - (isSmallScreen ? 80 : 100),
                       child: Center(
                         child: Column(

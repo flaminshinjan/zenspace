@@ -63,7 +63,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                             ),
                           ],
                         ),
-                        child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+                        child: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
                       ),
                     ),
                     SizedBox(height: spacing),
@@ -164,7 +164,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                           padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
+                            side: const BorderSide(
                               color: AppColors.cardBorder,
                               width: 2,
                             ),
@@ -249,7 +249,7 @@ class _CompanionSelectionPageState extends State<CompanionSelectionPage> {
                 color: AppColors.textPrimary,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               description,
               style: TextStyle(

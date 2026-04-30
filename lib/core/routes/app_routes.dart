@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../features/journal/presentation/screens/journal_screen.dart';
 import '../../features/journal/presentation/screens/ai_journal_screen.dart';
 
 class AppRoutes {

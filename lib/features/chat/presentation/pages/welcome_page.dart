@@ -36,12 +36,12 @@ class WelcomePage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
                       Text(
                         "let's pause and\ntalk it off\none at a\ntime!",
                         style: TextStyle(
@@ -98,14 +98,14 @@ class WelcomePage extends StatelessWidget {
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
-                                side: BorderSide(
+                                side: const BorderSide(
                                   color: AppColors.cardBorder,
                                   width: 2,
                                 ),
                               ),
                               elevation: 0,
                             ),
-                            child: Text(
+                            child: const Text(
                               'get started',
                               style: TextStyle(
                                 fontSize: 16,

@@ -11,13 +11,11 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: _primaryColor,
         secondary: _secondaryColor,
-        background: _backgroundColor,
         surface: _surfaceColor,
         error: _errorColor,
-        onBackground: Colors.white,
         onSurface: Colors.white,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
@@ -63,7 +61,7 @@ class AppTheme {
         labelStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
         hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white.withOpacity(0.05),
         elevation: 0,
         shape: RoundedRectangleBorder(

@@ -29,7 +29,7 @@ class MeditationPlayerPage extends StatefulWidget {
 
 class _MeditationPlayerPageState extends State<MeditationPlayerPage> with SingleTickerProviderStateMixin {
   bool _isPlaying = false;
-  bool _isLoading = false;
+  final bool _isLoading = false;
   Duration _remainingTime = Duration.zero;
   Timer? _timer;
   int _currentStepIndex = 0;

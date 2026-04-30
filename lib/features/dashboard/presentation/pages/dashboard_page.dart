@@ -3,16 +3,16 @@ import 'package:zenspace/core/constants/asset_constants.dart';
 import 'package:zenspace/features/chat/presentation/pages/talk_with_ai_page.dart';
 import 'package:zenspace/features/journal/presentation/screens/journal_screen.dart';
 import 'package:zenspace/features/music/presentation/pages/make_music_page.dart';
-import 'package:zenspace/features/profile/presentation/pages/profile_page.dart';
 import 'package:zenspace/features/home/presentation/widgets/talk_to_pawpal_widget.dart';
-import 'package:zenspace/features/journal/presentation/pages/journal_page.dart';
 import 'package:zenspace/features/therapists/presentation/pages/therapists_page.dart';
 import 'package:zenspace/features/meditation/presentation/pages/meditation_page.dart';
+import 'package:zenspace/features/wellness/presentation/pages/wellness_overview_page.dart';
+import 'package:zenspace/features/wellness/data/wellness_insights_cache.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
 import 'package:intl/intl.dart';
-import 'package:zenspace/features/journal/services/journal_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zenspace/features/journal/models/journal_entry.dart';
+import 'package:zenspace/features/journal/data/repositories/journal_repository.dart';
+import 'package:zenspace/features/journal/data/models/journal_entry.dart';
+import 'package:zenspace/features/mood/widgets/mood_check_in_widget.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -28,19 +28,27 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  // Custom dark colors
-  static const Color darkGray1 = Color(0xFF1A1A1A);
   static const Color darkGray2 = Color(0xFF222222);
   static const Color darkGray3 = Color(0xFF2A2A2A);
 
-  late final JournalService _journalService;
+  late final JournalRepository _journalRepository;
   late Future<List<JournalEntry>> _journalEntries;
+  final WellnessInsightsCache _wellnessInsightsCache = WellnessInsightsCache();
+  late Future<WellnessInsightsCacheEntry?> _cachedInsights;
+  final Set<String> _completedInsightIds = <String>{};
 
   @override
   void initState() {
     super.initState();
-    _journalService = JournalService(Supabase.instance.client);
-    _journalEntries = _journalService.getJournalEntries();
+    _journalRepository = JournalRepository();
+    _journalEntries = _journalRepository.getJournalEntries();
+    _cachedInsights = _wellnessInsightsCache.load();
+  }
+
+  void _reloadCachedInsights() {
+    setState(() {
+      _cachedInsights = _wellnessInsightsCache.load();
+    });
   }
 
   String _getMoodEmoji(String mood) {
@@ -102,9 +110,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('EEEE, MMMM d').format(now);
-    
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: Stack(
@@ -130,7 +135,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Container(
                                 width: 32,
                                 height: 32,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: darkGray3,
                                   shape: BoxShape.circle,
                                 ),
@@ -143,12 +148,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Text(
                                     _getGreeting(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       color: AppColors.textSecondary,
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     'Shinjan',
                                     style: TextStyle(
                                       fontSize: 14,
@@ -165,6 +170,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       ],
                     ),
                     const TalkToPawpalWidget(),
+                    
+                    // Mood Check-In Widget
+                    const MoodCheckInWidget(),
+                    
                     // Insights Grid
                     Column(
                       children: [
@@ -208,7 +217,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(
+                                          const Text(
                                             'Current Mood',
                                             style: TextStyle(
                                               fontSize: 12,
@@ -218,7 +227,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                           const SizedBox(height: 4),
                                           Text(
                                             '$moodEmoji ${mood.capitalize()}',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textPrimary,
@@ -227,7 +236,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                           const SizedBox(height: 4),
                                           Text(
                                             moodMessage,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 11,
                                               color: AppColors.textSecondary,
                                             ),
@@ -238,9 +247,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                   Container(
                                     width: 80,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: darkGray3,
-                                      borderRadius: const BorderRadius.only(
+                                      borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(16),
                                         bottomRight: Radius.circular(16),
                                       ),
@@ -305,7 +314,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       child: Container(
                         height: 200,
                         decoration: BoxDecoration(
-                          color: Color(0xff1D1D1D),
+                          color: const Color(0xff1D1D1D),
                           borderRadius: BorderRadius.circular(32),
                          
                         ),
@@ -337,6 +346,276 @@ class _DashboardPageState extends State<DashboardPage> {
                           ],
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 10),
+                    
+                    // Wellness Insights card
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const WellnessOverviewPage()),
+                        );
+                        if (!mounted) return;
+                        _reloadCachedInsights();
+                      },
+                      child: Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          color: darkGray2,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: 130,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF1E3A2F),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(32),
+                                    bottomRight: Radius.circular(32),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.watch,
+                                    size: 56,
+                                    color: const Color(0xFF7C9A92).withOpacity(0.6),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 16,
+                              top: 16,
+                              right: 140,
+                              child: FutureBuilder<WellnessInsightsCacheEntry?>(
+                                future: _cachedInsights,
+                                builder: (context, snapshot) {
+                                  final cached = snapshot.data;
+                                  final hasCached = cached != null && cached.suggestions.isNotEmpty;
+                                  final subtitle1 = hasCached
+                                      ? '${cached.suggestions.length} AI tips saved'
+                                      : 'Apple Watch data + AI';
+                                  final subtitle2 = hasCached
+                                      ? cached.suggestions.first.title
+                                      : 'for stability tips';
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Wellness Insights',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        subtitle1,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                      ),
+                                      Text(
+                                        subtitle2,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            Positioned(
+                              left: 16,
+                              bottom: 16,
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: darkGray3.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    FutureBuilder<WellnessInsightsCacheEntry?>(
+                      future: _cachedInsights,
+                      builder: (context, snapshot) {
+                        final cached = snapshot.data;
+                        if (cached == null || cached.suggestions.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: darkGray2,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: darkGray3),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF7C9A92).withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.auto_awesome,
+                                      color: Color(0xFF9BB8B3),
+                                      size: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Expanded(
+                                    child: Text(
+                                      'Latest AI Insight',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '${_completedInsightIds.length}/${cached.suggestions.length} completed',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white.withOpacity(0.75),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              ...cached.suggestions.map((suggestion) {
+                                final isDone = _completedInsightIds.contains(suggestion.id);
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  decoration: BoxDecoration(
+                                    color: darkGray3.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: isDone
+                                          ? const Color(0xFF7C9A92).withOpacity(0.7)
+                                          : Colors.white.withOpacity(0.08),
+                                    ),
+                                  ),
+                                  child: CheckboxListTile(
+                                    dense: true,
+                                    value: isDone,
+                                    activeColor: const Color(0xFF7C9A92),
+                                    checkColor: Colors.white,
+                                    controlAffinity: ListTileControlAffinity.leading,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+                                    onChanged: (_) {
+                                      setState(() {
+                                        if (isDone) {
+                                          _completedInsightIds.remove(suggestion.id);
+                                        } else {
+                                          _completedInsightIds.add(suggestion.id);
+                                        }
+                                      });
+                                    },
+                                    title: Text(
+                                      suggestion.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDone
+                                            ? Colors.white.withOpacity(0.65)
+                                            : Colors.white,
+                                        decoration:
+                                            isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      suggestion.description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.68),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Updated ${DateFormat('MMM d, h:mm a').format(cached.fetchedAt)}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.6),
+                                      ),
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const WellnessOverviewPage(),
+                                        ),
+                                      );
+                                      if (!mounted) return;
+                                      _reloadCachedInsights();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF7C9A92),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      minimumSize: Size.zero,
+                                    ),
+                                    icon: const Icon(Icons.arrow_forward, size: 16),
+                                    label: const Text(
+                                      'Open',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 10),
                     
@@ -385,7 +664,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 MaterialPageRoute(builder: (context) => const JournalScreen()),
                               );
                             },
-                            child: Container(
+                            child: SizedBox(
                               height: 200,
                               child: Image.asset(
                                 AssetConstants.journalCard,
@@ -430,7 +709,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Guided Meditation',
                                     style: TextStyle(
                                       fontSize: 20,
@@ -510,7 +789,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Create Music',
                                     style: TextStyle(
                                       fontSize: 20,
@@ -586,7 +865,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
@@ -594,7 +873,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   const SizedBox(height: 2),
                   Text(
                     value,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -602,7 +881,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
                     ),
@@ -613,9 +892,9 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           Container(
             width: 50,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: darkGray3,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topRight: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),

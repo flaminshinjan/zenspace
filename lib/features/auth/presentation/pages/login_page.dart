@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zenspace/core/config/supabase_config.dart';
 import 'package:zenspace/features/auth/presentation/pages/register_page.dart';
-import 'package:zenspace/features/main/presentation/pages/main_page.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
 import 'package:zenspace/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zenspace/core/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -35,107 +33,71 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       try {
-        await SupabaseConfig.client.auth.signInWithPassword(
+        // Try API login first
+        final response = await _authService.login(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
+        if (response.success) {
+          debugPrint('✅ API Login successful');
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const OnboardingPage(),
+              ),
+            );
+          }
+        } else {
+          // API failed - show error (no Supabase fallback)
+          debugPrint('⚠️ API login failed: ${response.error?.message}');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(response.error?.message ?? 'Login failed'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          }
+        }
+      } catch (error) {
         if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const OnboardingPage(),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login error: ${error.toString()}'),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
-      } on AuthException catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Unexpected error occurred'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
       }
 
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _signInWithGoogle() async {
-    setState(() => _isLoading = true);
-    try {
-      debugPrint('🔄 Starting Google sign in...');
-      await SupabaseConfig.client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: 'io.supabase.zenspace://login-callback',
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Google sign-in is not available. Use email/password with the API.'),
+          backgroundColor: Colors.orange,
+        ),
       );
-      
-      debugPrint('✅ Google sign in initiated');
-      
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const MainPage(),
-          ),
-        );
-      }
-    } catch (error) {
-      debugPrint('❌ Error during Google sign in: $error');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to sign in with Google: ${error.toString()}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
   Future<void> _signInWithApple() async {
-    setState(() => _isLoading = true);
-    try {
-      debugPrint('🔄 Starting Apple sign in...');
-      await SupabaseConfig.client.auth.signInWithOAuth(
-        OAuthProvider.apple,
-        redirectTo: 'io.supabase.zenspace://login-callback',
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Apple sign-in is not available. Use email/password with the API.'),
+          backgroundColor: Colors.orange,
+        ),
       );
-      
-      debugPrint('✅ Apple sign in initiated');
-      
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const MainPage(),
-          ),
-        );
-      }
-    } catch (error) {
-      debugPrint('❌ Error during Apple sign in: $error');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to sign in with Apple: ${error.toString()}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
@@ -164,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
+            side: const BorderSide(
               color: AppColors.cardBorder,
               width: 2,
             ),
@@ -208,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Welcome Back',
                     style: TextStyle(
                       fontSize: 32,
@@ -218,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Sign in to continue your mindfulness journey',
                     style: TextStyle(
                       fontSize: 16,
@@ -236,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 16,
                       ),
@@ -246,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.textSecondary.withOpacity(0.7),
                           fontSize: 16,
                         ),
-                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.textPrimary),
+                        prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         filled: true,
@@ -277,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 16,
                       ),
@@ -287,7 +249,7 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.textSecondary.withOpacity(0.7),
                           fontSize: 16,
                         ),
-                        prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
+                        prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
@@ -338,7 +300,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: AppColors.cardBorder,
                             width: 2,
                           ),
@@ -346,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                         elevation: 0,
                       ),
                       child: _isLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -354,7 +316,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: AppColors.textPrimary,
                               ),
                             )
-                          : Text(
+                          : const Text(
                               'Sign In',
                               style: TextStyle(
                                 fontSize: 16,
@@ -365,11 +327,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Row(
+                  const Row(
                     children: [
                       Expanded(child: Divider(color: AppColors.textSecondary)),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'OR',
                           style: TextStyle(
@@ -406,7 +368,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Don\'t have an account? Sign Up',
                       style: TextStyle(
                         color: AppColors.textSecondary,

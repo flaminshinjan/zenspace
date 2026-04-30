@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zenspace/core/config/supabase_config.dart';
 import 'package:zenspace/core/theme/app_colors.dart';
+import 'package:zenspace/core/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,6 +14,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _fullNameController = TextEditingController();
+  final _authService = AuthService();
   bool _isLoading = false;
 
   @override
@@ -22,6 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _fullNameController.dispose();
     super.dispose();
   }
 
@@ -31,23 +33,40 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isLoading = true);
 
     try {
-      await SupabaseConfig.client.auth.signUp(
+      // Try API registration first
+      final response = await _authService.register(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        fullName: _fullNameController.text.trim().isEmpty 
+            ? 'User' 
+            : _fullNameController.text.trim(),
       );
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please check your email to verify your account'),
-        ),
-      );
-      Navigator.of(context).pop();
+      if (response.success) {
+        debugPrint('✅ API Registration successful');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account created successfully!'),
+          ),
+        );
+        Navigator.of(context).pop();
+      } else {
+        // API failed - show error (no Supabase fallback)
+        debugPrint('⚠️ API registration failed: ${response.error?.message}');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.error?.message ?? 'Registration failed'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.toString()),
+          content: Text('Registration error: ${e.toString()}'),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -65,8 +84,8 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
-        title: Text(
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        title: const Text(
           'Create Account',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -84,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Join ZenSpace',
                     style: TextStyle(
                       fontSize: 32,
@@ -94,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Create an account to start your mindfulness journey',
                     style: TextStyle(
                       fontSize: 16,
@@ -112,12 +131,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Email',
                         labelStyle: TextStyle(color: AppColors.textSecondary),
                         prefixIcon: Icon(Icons.email_outlined, color: AppColors.textPrimary),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -140,12 +159,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: TextFormField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: AppColors.textSecondary),
                         prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -168,12 +187,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Confirm Password',
                         labelStyle: TextStyle(color: AppColors.textSecondary),
                         prefixIcon: Icon(Icons.lock_outline, color: AppColors.textPrimary),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -205,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: AppColors.cardBorder,
                             width: 2,
                           ),
@@ -213,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         elevation: 0,
                       ),
                       child: _isLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -221,7 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 color: AppColors.textPrimary,
                               ),
                             )
-                          : Text(
+                          : const Text(
                               'Sign Up',
                               style: TextStyle(
                                 fontSize: 16,

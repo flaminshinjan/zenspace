@@ -30,7 +30,7 @@ class MentalExercisesPage extends StatelessWidget {
     switch (mood.toLowerCase()) {
       case 'happy':
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Gratitude Practice',
             description: 'Take a moment to appreciate the good things in life',
             duration: '5 minutes',
@@ -43,7 +43,7 @@ class MentalExercisesPage extends StatelessWidget {
               'Reflect on how these things make you feel',
             ],
           ),
-          MentalExercise(
+          const MentalExercise(
             title: 'Positive Affirmations',
             description: 'Boost your positive mindset with affirmations',
             duration: '3 minutes',
@@ -59,7 +59,7 @@ class MentalExercisesPage extends StatelessWidget {
         ];
       case 'sad':
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Compassion Meditation',
             description: 'Practice self-compassion and kindness',
             duration: '10 minutes',
@@ -72,7 +72,7 @@ class MentalExercisesPage extends StatelessWidget {
               'Visualize sending love to yourself',
             ],
           ),
-          MentalExercise(
+          const MentalExercise(
             title: 'Mood Boosting Walk',
             description: 'A gentle walk to lift your spirits',
             duration: '15 minutes',
@@ -90,7 +90,7 @@ class MentalExercisesPage extends StatelessWidget {
         ];
       case 'anxious':
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Box Breathing',
             description: 'A powerful technique to calm anxiety',
             duration: '5 minutes',
@@ -104,7 +104,7 @@ class MentalExercisesPage extends StatelessWidget {
               'Repeat 5 times',
             ],
           ),
-          MentalExercise(
+          const MentalExercise(
             title: 'Grounding Exercise',
             description: 'Connect with the present moment',
             duration: '3 minutes',
@@ -120,7 +120,7 @@ class MentalExercisesPage extends StatelessWidget {
         ];
       case 'angry':
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Anger Release',
             description: 'Safely release built-up tension',
             duration: '5 minutes',
@@ -134,7 +134,7 @@ class MentalExercisesPage extends StatelessWidget {
               'Repeat 3 times',
             ],
           ),
-          MentalExercise(
+          const MentalExercise(
             title: 'Cooling Breath',
             description: 'A cooling breath technique to reduce anger',
             duration: '3 minutes',
@@ -150,7 +150,7 @@ class MentalExercisesPage extends StatelessWidget {
         ];
       case 'calm':
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Mindful Breathing',
             description: 'Maintain your calm state',
             duration: '5 minutes',
@@ -163,7 +163,7 @@ class MentalExercisesPage extends StatelessWidget {
               'Return focus when mind wanders',
             ],
           ),
-          MentalExercise(
+          const MentalExercise(
             title: 'Body Scan',
             description: 'A gentle body awareness practice',
             duration: '10 minutes',
@@ -179,7 +179,7 @@ class MentalExercisesPage extends StatelessWidget {
         ];
       default:
         return [
-          MentalExercise(
+          const MentalExercise(
             title: 'Basic Breathing',
             description: 'A simple breathing exercise',
             duration: '3 minutes',

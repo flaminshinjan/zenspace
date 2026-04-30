@@ -155,13 +155,13 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.cardBorder, width: 1),
                     ),
-                    child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+                    child: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 // Header
-                Text(
+                const Text(
                   'Create Your\nMelody',
                   style: TextStyle(
                     fontSize: 40,
@@ -171,7 +171,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Describe the music you want to hear',
                   style: TextStyle(
                     fontSize: 16,
@@ -193,11 +193,11 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                       TextField(
                         controller: _promptController,
                         maxLines: 3,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.textPrimary,
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'e.g. A calming piano melody with gentle rain in the background...',
                           hintStyle: TextStyle(
                             color: AppColors.textSecondary,
@@ -216,7 +216,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: AppColors.cardBorder),
+                              side: const BorderSide(color: AppColors.cardBorder),
                             ),
                           ),
                           child: _isGenerating
@@ -240,7 +240,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                 const SizedBox(height: 24),
 
                 // Sample prompts
-                Text(
+                const Text(
                   'Try these prompts',
                   style: TextStyle(
                     fontSize: 18,
@@ -274,7 +274,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                         child: Center(
                           child: Text(
                             _samplePrompts[index],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.textPrimary,
                             ),
@@ -322,7 +322,7 @@ class _MakeMusicPageState extends State<MakeMusicPage> with SingleTickerProvider
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(

@@ -1,87 +1,83 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/journal_entry.dart';
+import '../../../../core/services/journal_service_api.dart';
 
 class JournalRepository {
-  final SupabaseClient _supabase;
-  late final GenerativeModel _model;
+  final JournalServiceApi _journalServiceApi;
 
-  JournalRepository(this._supabase) {
-    _model = GenerativeModel(
-      model: 'gemini-2.0-flash',
-      apiKey: dotenv.env['GEMINI_API_KEY']!,
-    );
-  }
+  JournalRepository() : _journalServiceApi = JournalServiceApi();
 
   Future<List<JournalEntry>> getJournalEntries() async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
+      print('🔄 Fetching journal entries from API...');
+      final apiResponse = await _journalServiceApi.getEntries();
+      
+      print('📦 Get entries response success: ${apiResponse.success}');
+      print('📦 Get entries response data type: ${apiResponse.data.runtimeType}');
+      print('📦 Get entries response data: ${apiResponse.data}');
+      
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Journal entries fetched from API');
+        
+        // Backend returns data as direct array: { "data": [...] }
+        // Not nested like: { "data": { "entries": [...] } }
+        dynamic entriesData = apiResponse.data;
+        
+        // If data is a Map, check for nested structures
+        if (entriesData is Map) {
+          if (entriesData.containsKey('entries')) {
+            entriesData = entriesData['entries'];
+          } else if (entriesData.containsKey('data')) {
+            entriesData = entriesData['data'];
+          }
+        }
+        
+        // Handle direct List response
+        if (entriesData is List) {
+          print('✅ Processing ${entriesData.length} journal entries');
+          return entriesData
+              .map<JournalEntry>((json) {
+                try {
+                  final entry = JournalEntry.fromJson(json as Map<String, dynamic>);
+                  print('📝 Entry ${entry.id}: conversation length = ${entry.conversation.length}');
+                  return entry;
+                } catch (e) {
+                  print('❌ Error parsing entry: $e');
+                  print('❌ Entry data: $json');
+                  rethrow;
+                }
+              })
+              .toList();
+        } else {
+          print('❌ Unexpected entries data format: ${entriesData.runtimeType}');
+          print('❌ Data: $entriesData');
+        }
       }
-
-      final response = await _supabase
-          .from('journal_entries')
-          .select()
-          .eq('user_id', user.id)
-          .order('created_at', ascending: false);
-
-      return response
-          .map<JournalEntry>((json) => JournalEntry.fromJson(json))
-          .toList();
-    } catch (e) {
+      
+      throw Exception('Failed to fetch journal entries: ${apiResponse.error?.message}');
+    } catch (e, stackTrace) {
+      print('❌ Error fetching journal entries: $e');
+      print('Stack trace: $stackTrace');
       throw Exception('Failed to fetch journal entries: $e');
     }
   }
 
-  String summarizeConversation(List<Map<String, String>> conversation) {
-    if (conversation.isEmpty) return '';
-
-    // Get user messages only
-    final userMessages = conversation
-        .where((msg) => msg['role'] == 'user')
-        .map((msg) => msg['content'])
-        .where((content) => content != null && content.isNotEmpty)
-        .toList();
-
-    if (userMessages.isEmpty) return '';
-
-    // If there's only one message, return it
-    if (userMessages.length == 1) return userMessages.first!;
-
-    // If there are multiple messages, combine them
-    return userMessages.join(' | ');
-  }
-
-  Future<String> _generateSummary(List<Map<String, String>> conversation) async {
+  Future<JournalEntry> getJournalEntry(String entryId) async {
     try {
-      // Convert conversation to a readable format
-      final conversationText = conversation.map((msg) {
-        final role = msg['role'] == 'user' ? 'Me' : 'AI';
-        return '$role: ${msg['content']}';
-      }).join('\n');
-
-      // Create the prompt for summary generation
-      final prompt = '''
-Summarize this journal conversation in 2-3 lines, focusing on the key emotions, thoughts, and insights:
-
-$conversationText
-
-Summary:''';
-
-      final response = await _model.generateContent([Content.text(prompt)]);
-      final summary = response.text?.trim() ?? '';
+      print('🔄 Fetching journal entry: $entryId');
+      final apiResponse = await _journalServiceApi.getEntry(entryId);
       
-      // Ensure summary is not too long
-      if (summary.length > 200) {
-        return summary.substring(0, 197) + '...';
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Journal entry fetched from API');
+        final entry = JournalEntry.fromJson(apiResponse.data as Map<String, dynamic>);
+        print('📝 Entry has ${entry.conversation.length} conversation messages');
+        return entry;
       }
-      return summary;
-    } catch (e) {
-      print('Debug: Error generating summary: $e');
-      // Fall back to basic summary if Gemini fails
-      return summarizeConversation(conversation);
+      
+      throw Exception('Failed to fetch journal entry: ${apiResponse.error?.message}');
+    } catch (e, stackTrace) {
+      print('❌ Error fetching journal entry: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to fetch journal entry: $e');
     }
   }
 
@@ -93,67 +89,45 @@ Summary:''';
     required List<Map<String, String>> conversation,
   }) async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        print('Debug: User not authenticated');
-        throw Exception('User not authenticated');
+      // Backend handles AI and summary generation
+      if (mood == null || mood.isEmpty) {
+        throw Exception('Mood is required');
       }
 
-      // Generate summary using Gemini
-      final summary = await _generateSummary(conversation);
-      print('Debug: Generated summary: $summary');
+      print('🔄 Creating journal entry via API...');
+      final apiResponse = await _journalServiceApi.createEntry(
+        content: content.trim(),
+        mood: mood,
+        tags: [],
+      );
 
-      // Check if there's already an entry with the same timestamp (within the last minute)
-      final now = DateTime.now();
-      final oneMinuteAgo = now.subtract(const Duration(minutes: 1));
+      print('📦 Create entry response success: ${apiResponse.success}');
+      print('📦 Create entry response data: ${apiResponse.data}');
+
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Journal entry created via API');
+        
+        // Try different possible response structures
+        dynamic entryData = apiResponse.data;
+        
+        if (entryData is Map && entryData.containsKey('entry')) {
+          entryData = entryData['entry'];
+        } else if (entryData is Map && entryData.containsKey('data')) {
+          entryData = entryData['data'];
+        }
+        
+        if (entryData != null) {
+          return JournalEntry.fromJson(entryData);
+        } else {
+          print('❌ Entry data is null');
+        }
+      }
       
-      final existingEntries = await _supabase
-          .from('journal_entries')
-          .select()
-          .eq('user_id', user.id)
-          .gte('created_at', oneMinuteAgo.toIso8601String())
-          .order('created_at', ascending: false);
-
-      if (existingEntries.isNotEmpty) {
-        // Update the existing entry instead of creating a new one
-        final existingEntry = existingEntries.first;
-        print('Debug: Updating existing entry: ${existingEntry['id']}');
-
-        final response = await _supabase
-            .from('journal_entries')
-            .update({
-              'content': summary, // Use the generated summary as content
-              'conversation': conversation,
-              'updated_at': now.toIso8601String(),
-            })
-            .eq('id', existingEntry['id'])
-            .select()
-            .single();
-
-        return JournalEntry.fromJson(response);
-      }
-
-      // Create new entry if no recent entry exists
-      print('Debug: Creating new journal entry');
-      final response = await _supabase
-          .from('journal_entries')
-          .insert({
-            'user_id': user.id,
-            'title': title.trim(),
-            'content': summary.trim(), // Use the generated summary as content
-            'mood': mood,
-            'mood_value': moodValue ?? 3,
-            'conversation': conversation,
-            'created_at': now.toIso8601String(),
-            'updated_at': now.toIso8601String(),
-          })
-          .select()
-          .single();
-
-      return JournalEntry.fromJson(response);
-    } catch (e) {
-      print('Debug: Error in createJournalEntry: $e');
-      throw Exception('Failed to create/update journal entry: $e');
+      throw Exception('Failed to create journal entry: ${apiResponse.error?.message}');
+    } catch (e, stackTrace) {
+      print('❌ Error in createJournalEntry: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to create journal entry: $e');
     }
   }
 
@@ -166,29 +140,22 @@ Summary:''';
     List<Map<String, String>>? conversation,
   }) async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
+      final apiResponse = await _journalServiceApi.updateEntry(
+        entryId: id,
+        content: content,
+        mood: mood,
+        tags: null,
+      );
+
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Journal entry updated via API');
+        final entry = apiResponse.data!['entry'];
+        if (entry != null) {
+          return JournalEntry.fromJson(entry);
+        }
       }
-
-      final Map<String, dynamic> updates = {
-        if (title != null) 'title': title,
-        if (content != null) 'content': content,
-        if (mood != null) 'mood': mood,
-        if (moodValue != null) 'mood_value': moodValue,
-        if (conversation != null) 'conversation': conversation,
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
-      final response = await _supabase
-          .from('journal_entries')
-          .update(updates)
-          .eq('id', id)
-          .eq('user_id', user.id) // Ensure user can only update their own entries
-          .select()
-          .single();
-
-      return JournalEntry.fromJson(response);
+      
+      throw Exception('Failed to update journal entry: ${apiResponse.error?.message}');
     } catch (e) {
       throw Exception('Failed to update journal entry: $e');
     }
@@ -196,34 +163,98 @@ Summary:''';
 
   Future<void> deleteJournalEntry(String id) async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
-      }
+      final apiResponse = await _journalServiceApi.deleteEntry(id);
 
-      await _supabase
-          .from('journal_entries')
-          .delete()
-          .eq('id', id)
-          .eq('user_id', user.id); // Ensure user can only delete their own entries
+      if (apiResponse.success) {
+        print('✅ Journal entry deleted via API');
+        return;
+      }
+      
+      throw Exception('Failed to delete journal entry: ${apiResponse.error?.message}');
     } catch (e) {
       throw Exception('Failed to delete journal entry: $e');
     }
   }
 
   Stream<List<JournalEntry>> streamJournalEntries() {
-    final user = _supabase.auth.currentUser;
-    if (user == null) {
-      throw Exception('User not authenticated');
-    }
-
-    return _supabase
-        .from('journal_entries')
-        .stream(primaryKey: ['id'])
-        .eq('user_id', user.id)
-        .order('created_at', ascending: false)
-        .map((response) => response
-            .map<JournalEntry>((json) => JournalEntry.fromJson(json))
-            .toList());
+    // For real-time updates, you could implement WebSocket or polling
+    // For now, we'll throw an exception as streaming requires backend support
+    throw UnimplementedError('Real-time streaming requires WebSocket implementation');
   }
-} 
+
+  // AI Suggestions - Backend handles this
+  Future<List<String>> getAiSuggestions({
+    required String mood,
+    String? context,
+    String? mode,
+  }) async {
+    try {
+      final apiResponse = await _journalServiceApi.getAiSuggestions(
+        mood: mood,
+        context: context,
+        mode: mode ?? 'suggestions',
+      );
+
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ AI suggestions fetched from API');
+        final suggestions = apiResponse.data!['suggestions'];
+        if (suggestions is List) {
+          return suggestions.cast<String>();
+        }
+      }
+
+      throw Exception('Failed to get AI suggestions: ${apiResponse.error?.message}');
+    } catch (e) {
+      throw Exception('Failed to get AI suggestions: $e');
+    }
+  }
+
+  // Mood Analytics - Backend handles this
+  Future<Map<String, dynamic>> getMoodAnalytics({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    try {
+      final apiResponse = await _journalServiceApi.getMoodAnalytics(
+        startDate: startDate.toIso8601String(),
+        endDate: endDate.toIso8601String(),
+      );
+
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Mood analytics fetched from API');
+        return apiResponse.data!;
+      }
+
+      throw Exception('Failed to get mood analytics: ${apiResponse.error?.message}');
+    } catch (e) {
+      throw Exception('Failed to get mood analytics: $e');
+    }
+  }
+
+  // Calendar Entries
+  Future<List<JournalEntry>> getCalendarEntries({
+    required int year,
+    required int month,
+  }) async {
+    try {
+      final apiResponse = await _journalServiceApi.getCalendarEntries(
+        year: year,
+        month: month,
+      );
+
+      if (apiResponse.success && apiResponse.data != null) {
+        print('✅ Calendar entries fetched from API');
+        final entries = apiResponse.data!['entries'];
+        if (entries is List) {
+          return entries
+              .map<JournalEntry>((json) => JournalEntry.fromJson(json))
+              .toList();
+        }
+      }
+
+      throw Exception('Failed to get calendar entries: ${apiResponse.error?.message}');
+    } catch (e) {
+      throw Exception('Failed to get calendar entries: $e');
+    }
+  }
+}
